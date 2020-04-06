@@ -16,7 +16,7 @@ from plotting import *
 from celluloid import Camera
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
-pattern=['*FrM800*FlMreal120*ByH-450*']
+pattern=['*FrM1200*FlMreal180*BuH120*']
 
 AOI=False
 
@@ -31,10 +31,10 @@ for p in pattern:
     
 markdot=[]
 colors_w=getcolors(len(mod.results.TransientSolution)-0, 'winter')
-norm = mpl.colors.Normalize(vmin=0, vmax=len(mod.results.TransientSolution)-20)
+norm = mpl.colors.Normalize(vmin=0, vmax=len(mod.results.TransientSolution)-0)
 colors_s=getcolors(len(mod.results.TransientSolution), 'autumn')
 intervall=1
-all_values=getallpars(mod, cut=(0,-20))[0]
+all_values=getallpars(mod)[0]
 fj_chars, rfj_chars_GL, rfj_chars_mval, inds_dic_GL, inds_dic_mval = get_fjord(mod, all_values, AOI=False)
 plt.close('all')
 begin=45000
