@@ -130,14 +130,14 @@ for pattern in megapat:
         plt.sca(ax6)
         plot(fj_chars['P'][1], np.array(fj_chars['P'][0])/1e6, color=palette)
         xlim(20000,85000)
-        ylim(1,2.5)
+        ylim(1.5,4)
         ylabel('P [km\u00b2]')
         plt.sca(ax7)
         plot(np.array(fj_chars['dP'][1])/1e3, fj_chars['dP'][0], color=palette)
         ylabel('dP [m\u00b2]')
         xlabel('Distance [km]')
         xlim(20,85)
-        ylim(-200,200)
+        ylim(-300,300)
 
     #ax9.remove()
 
