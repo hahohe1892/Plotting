@@ -16,7 +16,7 @@ from plotting import *
 from celluloid import Camera
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
-pattern=['*FrM1200*FlMreal180*ByH-900*asy*']
+pattern=['*FrM1200*FlMreal180*ByH900*asy*']
 
 AOI=False
 
