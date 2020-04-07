@@ -26,10 +26,11 @@ bottlenecks=['*FrM800*FlMreal120*ByH-450*','*FrM1200*FlMreal180*ByH-675*','*FrM1
 embayments=['*FrM1200*FlMreal180*ByH450*','*FrM1200*FlMreal180*ByH900*off.nc','*FrM1200*FlMreal180*ByH1350*']#, '*FrM1200*ByH900*asy*', '*FrM1200*ByH1800*asy*']
 depressions=['*FrM1200*FlMreal180*BuH-120*','*FrM1000*FlMreal150*BuH-240*','*FrM1200*FlMreal180*BuH-360*']
 bumps=['*FrM1200*FlMreal180*BuH120*','*FrM1200*FlMreal180*BuH180*','*FrM1200*FlMreal180*BuH240*']
-
+asy_bottlenecks=['*FrM1200*ByH-900*asy*', '*FrM1200*ByH-1800*asy*']
+asy_embayments=[ '*FrM1200*ByH900*asy*', '*FrM1200*ByH1800*asy*']
 name_dict=['bottlenecks','embayments','depressions','bumps']
 
-megapat=[bottlenecks, embayments, depressions, bumps]
+megapat=[bottlenecks, embayments, depressions, bumps, asy_bottlenecks, asy_embayments]
 
 AOI=False
 
@@ -96,12 +97,18 @@ for pattern in megapat:
         if z==11:
             palette='Black'       
 
-        if 'asy' in p and r==3:
-            palette='LightPink'
-            s=20
-        if 'asy' in p and r==4:
-            palette='Violet'
-            s=20
+        if 'asy' in p and z==12:
+            palette='Gold'
+        if 'asy' in p and z==13:
+            palette='Orange'
+        if 'asy' in p and z==14:
+            palette='Saddlebrown'
+        if 'asy' in p and z==15:
+            palette='SkyBlue'
+        if 'asy' in p and z==16:
+            palette='DodgerBlue'
+        if 'asy' in p and z==17:
+            palette='DarkBlue'
 
         plt.sca(ax0)
         val_evol(palette, '','no', all_values['GroundinglineMassFlux'], s=s)
@@ -130,14 +137,14 @@ for pattern in megapat:
         plt.sca(ax6)
         plot(fj_chars['P'][1], np.array(fj_chars['P'][0])/1e6, color=palette)
         xlim(20000,85000)
-        ylim(1.5,4)
+        ylim(1,2.5)
         ylabel('P [km\u00b2]')
         plt.sca(ax7)
         plot(np.array(fj_chars['dP'][1])/1e3, fj_chars['dP'][0], color=palette)
         ylabel('dP [m\u00b2]')
         xlabel('Distance [km]')
         xlim(20,85)
-        ylim(-300,300)
+        ylim(-200,200)
 
     #ax9.remove()
 
