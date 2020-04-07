@@ -16,7 +16,7 @@ from plotting import *
 from celluloid import Camera
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
-pattern=['*FrM1200*FlMreal180*BuH-120*']
+pattern=['*FrM1200*FlMreal180*ByH-900*asy*']
 
 AOI=False
 
@@ -125,19 +125,19 @@ ax2 = fig.add_subplot(gs[2,:19])
 
 ### stagnant
 plt.sca(ax1)
-along_evol(mod, 'viridis','','no',-50,'Surface','Base', linewidth=0.8)
+along_evol(mod, 'viridis','','no',-25,'Surface','Base', linewidth=0.8)
 hlines(0,0,85000, color='lightgrey')
 axvspan(begin,end, color='gainsboro', alpha=0.5)
 xlim(0,85000)
 ylabel('z [m]')
 plt.sca(ax2)
-along_evol(mod, 'viridis', '','no',-50,'Vel', linewidth=0.8)
+along_evol(mod, 'viridis', '','no',-25,'Vel', linewidth=0.8)
 xlabel('x-coordinates [km]')
 xlim(0,85000)
 ylabel('V [m/a]')
 axvspan(begin,end, color='gainsboro', alpha=0.5)
 plt.sca(ax0)
-cont_all(mod, 'GL',1, 'nobar',50, linewidths=0.8)
+cont_all(mod, 'GL',1, 'nobar',25, linewidths=0.8)
 axvspan(begin,end, color='gainsboro', alpha=0.5)
 ylim(10000,20000)
 ylabel('y-coordinates [km]')
