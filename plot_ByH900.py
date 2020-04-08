@@ -16,7 +16,7 @@ from plotting import *
 from celluloid import Camera
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
-pattern=['*FrM1200*FlMreal180*ByH900*asy*']
+pattern=['*FrM1200*FlMreal180*ByH900*off.nc']
 
 AOI=False
 
@@ -30,11 +30,11 @@ for p in pattern:
     fj_chars, rfj_chars_GL, rfj_chars_mval, inds_dic_GL, inds_dic_mval = get_fjord(mod, all_values, AOI)
     
 markdot=[]
-colors_w=getcolors(len(mod.results.TransientSolution)-0, 'winter')
-norm = mpl.colors.Normalize(vmin=0, vmax=len(mod.results.TransientSolution)-0)
+colors_w=getcolors(len(mod.results.TransientSolution)-20, 'winter')
+norm = mpl.colors.Normalize(vmin=0, vmax=len(mod.results.TransientSolution)-20)
 colors_s=getcolors(len(mod.results.TransientSolution), 'autumn')
 intervall=1
-all_values=getallpars(mod)[0]
+all_values=getallpars(mod, cut=(0,-1))[0]
 fj_chars, rfj_chars_GL, rfj_chars_mval, inds_dic_GL, inds_dic_mval = get_fjord(mod, all_values, AOI=False)
 plt.close('all')
 begin=45000
@@ -72,11 +72,11 @@ for i in range(0,len(mod.results.TransientSolution)-0,intervall):
     text(75000, 1200, 'Year {}'.format(i), fontsize=14)
     greybox()
     hlines(0,0,85000, color='lightgrey')
-    #plot(array[0], equi, color='red')
+    plot(array[0], equi, color='red')
     camera.snap()
 
 title('Glacier profile time evolution', fontsize=20)
-#text(0, 70, 'Flotation Height', color='red')
+text(0, 70, 'Flotation Height', color='red')
 text(55000,1200, 'Depression', color='darkgrey',horizontalalignment='center', fontsize=14)
 cbaxes = inset_axes(ax,width="20%", height="5%", loc=1, borderpad=3)
 cb1 = mpl.colorbar.ColorbarBase(cbaxes, cmap=mpl.cm.winter, norm=norm, label='Years', orientation='horizontal')
@@ -125,19 +125,19 @@ ax2 = fig.add_subplot(gs[2,:19])
 
 ### stagnant
 plt.sca(ax1)
-along_evol(mod, 'viridis','','no',-25,'Surface','Base', linewidth=0.8)
+along_evol(mod, 'winter','','no',-20,'Surface','Base', linewidth=0.8)
 hlines(0,0,85000, color='lightgrey')
 axvspan(begin,end, color='gainsboro', alpha=0.5)
 xlim(0,85000)
 ylabel('z [m]')
 plt.sca(ax2)
-along_evol(mod, 'viridis', '','no',-25,'Vel', linewidth=0.8)
+along_evol(mod, 'winter', '','no',-20,'Vel', linewidth=0.8)
 xlabel('x-coordinates [km]')
 xlim(0,85000)
 ylabel('V [m/a]')
 axvspan(begin,end, color='gainsboro', alpha=0.5)
 plt.sca(ax0)
-cont_all(mod, 'GL',1, 'nobar',25, linewidths=0.8)
+cont_all(mod, 'GL',1, 'nobar', linewidths=0.8)
 axvspan(begin,end, color='gainsboro', alpha=0.5)
 ylim(10000,20000)
 ylabel('y-coordinates [km]')
@@ -146,7 +146,7 @@ ax0.text(0.9, 0.85, 'Grounding Line', color='black', transform=ax0.transAxes,hor
 ax1.text(0.9, 0.85, 'Shape Profile', color='black', transform=ax1.transAxes,horizontalalignment='center', weight='bold')
 ax2.text(0.9, 0.85, 'Velocity Profile', color='black', transform=ax2.transAxes, horizontalalignment='center', weight='bold')
 ax3 = fig.add_subplot(gs[1,-1])
-cb1 = mpl.colorbar.ColorbarBase(ax3, cmap=mpl.cm.viridis, norm=norm, label='Years', orientation='vertical')
+cb1 = mpl.colorbar.ColorbarBase(ax3, cmap=mpl.cm.winter, norm=norm, label='Years', orientation='vertical')
 ax0.set_xticklabels([])
 ax1.set_xticklabels([])
 ax2.set_xticklabels(range(0,85,10))
