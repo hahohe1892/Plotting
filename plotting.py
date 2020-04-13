@@ -137,7 +137,7 @@ def getbar(palette, arg, **kwargs):
     sm = plt.cm.ScalarMappable(cmap=palette, norm=plt.Normalize(vmin=0, vmax=len(arg)))
     plt.colorbar(sm, **kwargs)
     return sm
-def greybox(begin=35000, end=65000):
+def greybox(begin=45000, end=65000):
     axvspan(begin,end, color='gainsboro')#, alpha=0.15)
 
 def flux_station(md, limit1, limit2):    ### decompose into vel and thk; need to integrate vel as well.
@@ -183,10 +183,7 @@ def along(md, parameter,limit1=15050, limit2=14950, **kwargs):
     ind=np.argsort(array[0]) 
     array=array[:,ind]
     if array[1][0]<0 and max(array[1])>-1:
-        try:
-            array=array[:,0:np.where(array[1]>-2)[0][1]]
-        except:
-            array=array[:,0:int(np.where(array[1]>-2)[0])]
+        array=array[:,0:np.where(array[1]>-2)[0][1]]
     if array[1][0]>0:
         try:
             array=array[:,0:np.where(array[1]<2)[0][1]]
@@ -296,7 +293,7 @@ def common(GL, indic,AOI,**kwargs): ## get the values for fjord characteristics 
             x_coord=min(indic[arg][1], key=lambda x:abs(x-i))
             inds_pot_add=np.nonzero(GL==i)[0]
             inds_add_bool=[y not in inds_list for y in inds_pot_add]
-            if i < 65000 and i>35000 and AOI==True:
+            if i < 65000 and i>45000 and AOI==True:
                 inds_add=inds_pot_add[inds_add_bool]
                 insert_len=len(inds_add)
                 close.extend([x_coord]*insert_len)
@@ -317,7 +314,7 @@ def common(GL, indic,AOI,**kwargs): ## get the values for fjord characteristics 
 
 def fit_dP(dP):
     dP_adj=dP
-    aoi=np.where(np.logical_and(dP[1]<65000, dP[1]>35000))
+    aoi=np.where(np.logical_and(dP[1]<65000, dP[1]>45000))
     dat=dP[0][aoi]
     x=dP[1][aoi]
     z=np.polyfit(x, dat, 4)
