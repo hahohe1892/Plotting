@@ -59,27 +59,26 @@ for pattern in megapat:
         mod=glue_runs_md(modpath)
         #all_values=glue_runs(modpath)
 
-        crap= plt.figure(10)
         all_values=getallpars(mod, cut=(0,-30))[0]
-
-        fj_chars, rfj_chars_GL, rfj_chars_mval, inds_dic_GL, inds_dic_mval = get_fjord(mod, all_values, AOI)
         
         newstr = ''.join((ch if ch in '0123456789-' else ' ') for ch in p)
         lon = np.array([int(i) for i in newstr.split()])
-        wp=[[],np.linspace(0,85000,int(85000/100))]
-        wa=[[],np.linspace(0,85000,int(85000/100))]
-        for q in range(0,85000,100):
-            per, area=wets(q, lon[2], lon[4], lon[5], lon[7])[0:2]
-            wp[0].append(per)
-            wa[0].append(area)
-        
-        fj_chars['WPer']=wp
-        fj_chars['dWPer']=[np.array(deltaval(wp[0]))*-1, wp[1]]
-        #fj_chars['dWPer']=[runmean(deltaval(wp[0]),10)*-1,wp[1][:-10]]
-        fj_chars['WA']=wa
-        fj_chars['dWA']=[np.array(deltaval(wa[0]))*-1, wa[1]]
-        rfj_chars_GL, inds_dic_GL=common(all_values['GLval'], fj_chars, AOI,  **fj_chars)
-        plt.close(10)
+        wet_pat=lon[[2,3,5,7]]
+        fj_chars, rfj_chars_GL, rfj_chars_mval, inds_dic_GL, inds_dic_mval = get_fjord(mod, all_values, AOI, pattern=wet_pat)
+    
+#        wp=[[],np.linspace(0,85000,int(85000/100))]
+#        wa=[[],np.linspace(0,85000,int(85000/100))]
+#        for q in range(0,85000,100):
+#            per, area=wets(q, lon[2], lon[4], lon[5], lon[7])[0:2]
+#            wp[0].append(per)
+#            wa[0].append(area)
+#        
+#        fj_chars['WPer']=wp
+#        fj_chars['dWPer']=[np.array(deltaval(wp[0]))*-1, wp[1]]
+#        #fj_chars['dWPer']=[runmean(deltaval(wp[0]),10)*-1,wp[1][:-10]]
+#        fj_chars['WA']=wa
+#        fj_chars['dWA']=[np.array(deltaval(wa[0]))*-1, wa[1]]
+#        rfj_chars_GL, inds_dic_GL=common(all_values['GLval'], fj_chars, AOI,  **fj_chars)
 
         markdot=[]
 
@@ -88,11 +87,11 @@ for pattern in megapat:
         marker='o'
 
         if z==0:
-            palette='LightPink'
+            palette='Gold'
         if z==1:
-            palette='HotPink'
+            palette='Orange'
         if z==2:
-            palette='DeepPink'
+            palette='Saddlebrown'
        # if z==3:
         #    palette='LightPink'
          #   marker='+'
@@ -149,7 +148,7 @@ for pattern in megapat:
         ylabel('GL Position [km]')
         xlabel('Years')
         plt.sca(ax6)
-        plot(fj_chars['P'][1], np.array(fj_chars['P'][0])/1e6, color=palette)
+        plot(fj_chars['WA'][1], np.array(fj_chars['WA'][0])/1e6, color=palette)
         xlim(20000,85000)
         ylim(1,3)
         ylabel('WA [km\u00b2]')

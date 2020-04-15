@@ -123,14 +123,14 @@ def val_evol(palette, title, bar='no',*args, **kwargs):
     plt.title(title)
     plt.grid(True)
 
-def scatter_pos(GL, palette, markdot, *args):
+def scatter_pos(GL, palette, markdot, *args, **kwargs):
     colors=getcolors(len(GL), palette)
     for arg in args:
         for i in range(len(arg)):
             if i in markdot:
-                plt.scatter(GL[i], arg[i], color='red')
+                plt.scatter(GL[i], arg[i], color='red', **kwargs)
             else:
-                plt.scatter(GL[i], arg[i], color=colors[i])
+                plt.scatter(GL[i], arg[i], color=colors[i], **kwargs)
     grid(True)
 
 def getbar(palette, arg, **kwargs):
@@ -343,7 +343,11 @@ def wa_from_name(mod):
 def runmean(timeseries, window):
     runmean=np.convolve(timeseries, np.ones((window,))/window, mode='valid')
     return runmean
-
+def runsum(timeseries, window):
+    s=[]
+    for i in range(0,len(timeseries)-window):
+        s.append(np.sum(timeseries[i:i+window]))
+    return s
 def GLgate(md, par, GL, buff):
     if hasattr(md.results.TransientSolution[-1], 'catch_mesh'):
         lens=[]
@@ -420,7 +424,7 @@ def getallpars(md, cut='all'):
     return all_values, all_values_fr
     
     #### create fjord geometry parameters
-def ffj_chars(md):
+def ffj_chars(md, **kwargs):
     fj_chars={}
     fj_chars['P']=along_wetted(md, 600)
     dP=dalong_wetted(fj_chars['P'][0], 600)
@@ -428,8 +432,22 @@ def ffj_chars(md):
     ddP=dalong_wetted(fj_chars['dP'][0],600)
     fj_chars['ddP']=fit_dP(ddP)
     fj_chars['D']=along_waterdepth(md, depthstep=350)
+    fig = plt.figure(1000)
     fj_chars['W']=along_width(md, md.geometry.bed, levels=[500])
-
+    plt.close(1000)
+    if 'pattern' in kwargs:
+        pattern=kwargs.get('pattern')
+        wp=[[],np.linspace(0,85000,int(85000/100))]
+        wa=[[],np.linspace(0,85000,int(85000/100))]
+        for q in range(0,85000,100):
+            per, area=wets(q, pattern[0], pattern[1], pattern[2], pattern[3])[0:2]
+            wp[0].append(per)
+            wa[0].append(area)
+        fj_chars['WPer']=wp
+        fj_chars['dWPer']=[np.array(deltaval(wp[0]))*-1, wp[1]]
+        fj_chars['WA']=wa
+        fj_chars['dWA']=[np.array(deltaval(wa[0]))*-1, wa[1]]
+        
     return fj_chars
 
     #### combine fjord and retreat parameters
@@ -505,8 +523,12 @@ def cont_all(md, front_or_GL, intervall, bar, **kwargs):
             getbar('winter', md.results.TransientSolution, orientation='horizontal')        
 
 
-def get_fjord(mod, all_values, AOI): 
-    fj_chars=ffj_chars(mod)
+def get_fjord(mod, all_values, AOI, **kwargs):
+    if 'pattern' in kwargs:
+        pattern=kwargs.get('pattern')
+        fj_chars=ffj_chars(mod, pattern=pattern)
+    else:
+        fj_chars=ffj_chars(mod)
     rfj_chars_GL, inds_dic_GL=common(all_values['GLval'], fj_chars, AOI,  **fj_chars)    
     rfj_chars_mval, inds_dic_mval=common(all_values['mval'], fj_chars, AOI, **fj_chars)
     rfj_chars_GL['Pthk']=[]
