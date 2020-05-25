@@ -18,12 +18,14 @@ from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from basaldrag import *
 from drivingstress import *
 from slope import *
-pattern=['*FrM1200*FlMreal180*ByH900*off.nc']
+from mpl_toolkits.axes_grid.inset_locator import inset_axes, InsetPosition
+
+pattern=['*FrM1000*FlMreal150*BuH-240*.nc']
 
 AOI=False
 
 for p in pattern:
-    modpath='./Models/'+p
+    modpath='./Models/depressions/'+p
 
     mod=glue_runs_md(modpath)
     all_values=glue_runs(modpath)
@@ -32,16 +34,19 @@ for p in pattern:
     fj_chars, rfj_chars_GL, rfj_chars_mval, inds_dic_GL, inds_dic_mval = get_fjord(mod, all_values, AOI)
     
 markdot=[]
-colors_w=getcolors(len(mod.results.TransientSolution)-20, 'winter')
+colors_w=getcolors(len(mod.results.TransientSolution)-20, 'viridis')
 norm = mpl.colors.Normalize(vmin=0, vmax=len(mod.results.TransientSolution)-20)
 colors_s=getcolors(len(mod.results.TransientSolution), 'autumn')
 intervall=1
-all_values=getallpars(mod, cut=(0,-30))[0]
-fj_chars, rfj_chars_GL, rfj_chars_mval, inds_dic_GL, inds_dic_mval = get_fjord(mod, all_values, AOI=False)
+#all_values=getallpars(mod, cut='all')[0]
+#fj_chars, rfj_chars_GL, rfj_chars_mval, inds_dic_GL, inds_dic_mval = get_fjord(mod, all_values, AOI=False)
 plt.close('all')
 begin=45000
 end=65000
-
+alongr=np.where(np.logical_and(mod.mesh.y<=15050, mod.mesh.y>=14950)) 
+array=np.array((mod.mesh.x[alongr], np.squeeze(mod.geometry.bed[alongr]))) 
+ind=np.argsort(array[0])  
+array=array[:,ind]
 
 
 triangles=mpl.tri.Triangulation(mod.mesh.x, mod.mesh.y, mod.mesh.elements-1)
@@ -130,31 +135,63 @@ ax2 = fig.add_subplot(gs[2,:19])
 
 ### stagnant
 plt.sca(ax1)
-along_evol(mod, 'winter','','no',-20,'Surface','Base', linewidth=0.8)
+along_evol(mod, 'viridis','','no',-1,'Surface','Base', linewidth=0.8)
 hlines(0,0,85000, color='lightgrey')
 axvspan(begin,end, color='gainsboro', alpha=0.5)
 xlim(0,85000)
 ylabel('z [m]')
+
+axins = inset_axes(ax1, width=1.3, height=0.9)
+#ax10 = plt.axes([0,0,1,1])
+#ip = InsetPosition(ax1, [0.75,0.62,0.22,0.35])
+#ax10.set_axes_locator(ip)
+
+along(mod, mod.results.TransientSolution[217].Surface, color='blue', linewidth=1)
+along(mod, mod.results.TransientSolution[217].Base, color='blue', linewidth=1)
+along(mod, mod.geometry.bed, color='black', linewidth=1)
+plot(np.linspace(0,85000,532),array[1]*((1023-917)/1023)*-1, color='red', linewidth=1)
+hlines(0,0,85000, color='lightgrey')
+xlim(40000,75000)
+axvspan(begin,end, color='gainsboro', alpha=0.5)
+ylim(-850,500)
+plt.yticks(fontsize=6)
+plt.xticks(fontsize=6)
+yticks([-500,0,500], [-500,0,500])
+xticks([45000,55000,65000,75000],[45,55,65,75])
+
 plt.sca(ax2)
-along_evol(mod, 'winter', '','no',-20,'Vel', linewidth=0.8)
+for q in range(0,len(mod.results.TransientSolution)-20,intervall):
+    along_vel(mod, mod.results.TransientSolution[q].Vel, color=colors_w[q], linewidth=0.8)
 xlabel('x-coordinates [km]')
 xlim(0,85000)
 ylabel('V [m/a]')
 axvspan(begin,end, color='gainsboro', alpha=0.5)
 plt.sca(ax0)
 cont_all(mod, 'GL',1, 'nobar', linewidths=0.8)
+plotcontour(mod, mod.geometry.bed, levels=[0], linewidths=0.8)
 axvspan(begin,end, color='gainsboro', alpha=0.5)
 ylim(10000,20000)
 ylabel('y-coordinates [km]')
 ax0.set_yticklabels(range(0,11,2))
-ax0.text(0.9, 0.85, 'Grounding Line', color='black', transform=ax0.transAxes,horizontalalignment='center', weight='bold')
-ax1.text(0.9, 0.85, 'Shape Profile', color='black', transform=ax1.transAxes,horizontalalignment='center', weight='bold')
-ax2.text(0.9, 0.85, 'Velocity Profile', color='black', transform=ax2.transAxes, horizontalalignment='center', weight='bold')
-ax3 = fig.add_subplot(gs[1,-1])
-cb1 = mpl.colorbar.ColorbarBase(ax3, cmap=mpl.cm.winter, norm=norm, label='Years', orientation='vertical')
+
+axins1 = ax0.inset_axes([0.025, 0.3, 0.25, 0.4])
+plt.axes(axins1)
+plotcontour(mod, mod.results.TransientSolution[217].MaskGroundediceLevelset, levels=[0], colors='blue')
+plotcontour(mod, mod.geometry.bed, levels=[0], colors='black')
+axvspan(begin,end, color='gainsboro', alpha=0.5)
+axins1.yaxis.tick_right()
+yticks([])
+xticks([0,25000,50000,75000],[0,25,50,75],fontsize=6)
+#ax0.text(0.9, 0.85, 'Grounding Line', color='black', transform=ax0.transAxes,horizontalalignment='center', weight='bold')
+#ax1.text(0.9, 0.85, 'Shape Profile', color='black', transform=ax1.transAxes,horizontalalignment='center', weight='bold')
+#ax2.text(0.9, 0.85, 'Velocity Profile', color='black', transform=ax2.transAxes, horizontalalignment='center', weight='bold')
+ax3 = fig.add_subplot(gs[:,-1])
+cb1 = mpl.colorbar.ColorbarBase(ax3, cmap=mpl.cm.viridis, norm=norm, label='Years', orientation='vertical')
 ax0.set_xticklabels([])
 ax1.set_xticklabels([])
 ax2.set_xticklabels(range(0,85,10))
+
+
 
 ### animation
 for i in range(0,len(mod.results.TransientSolution)-0,intervall):

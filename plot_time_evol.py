@@ -59,11 +59,11 @@ for pattern in megapat:
         mod=glue_runs_md(modpath)
         #all_values=glue_runs(modpath)
 
-        all_values=getallpars(mod, cut=(0,-30))[0]
+        all_values=getallpars(mod, cut='all')[0]
         
         newstr = ''.join((ch if ch in '0123456789-' else ' ') for ch in p)
         lon = np.array([int(i) for i in newstr.split()])
-        wet_pat=lon[[2,3,5,7]]
+        wet_pat=lon[[2,4,5,7]]
         fj_chars, rfj_chars_GL, rfj_chars_mval, inds_dic_GL, inds_dic_mval = get_fjord(mod, all_values, AOI, pattern=wet_pat)
     
 #        wp=[[],np.linspace(0,85000,int(85000/100))]
