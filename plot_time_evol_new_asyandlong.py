@@ -14,13 +14,11 @@ import os
 from copy import *
 from plotting import *
 
-embayments=['*FrM1200*FlMreal180*BuH0*BuP0*BuS0*ByH450*ByP55000*ByS20000*','*FrM1200*FlMreal180*BuH0*BuP0*BuS0*ByH900*ByP55000*ByS20000*off.nc','*FrM1200*FlMreal180*BuH0*BuP0*BuS0*ByH1350*ByP55000*ByS20000*']
-depressions=['*FrM1200*FlMreal180*BuH-120*BuP55000*BuS20000*ByH0*ByP0*ByS0*','*FrM1000*FlMreal150*BuH-240*BuP55000*BuS20000*ByH0*ByP0*ByS0*','*FrM800*FlMreal120*BuH-360*BuP55000*BuS20000*ByH0*ByP0*ByS0*']
+embayments=['*FrM1200*FlMreal180*BuH0*BuP0*BuS0*ByH901*ByP55000*ByS20000*asy*', '*FrM1200*FlMreal180*BuH0*BuP0*BuS0*ByH1800*ByP55000*ByS20000*asy*', '*FrM1200*FlMreal180*BuH0*BuP0*BuS0*ByH900*ByP50000*ByS30000*']
+depressions=['*FrM1200*FlMreal180*BuH-240*BuP50000*BuS30000*ByH0*ByP0*ByS0*']
+bottlenecks=['*FrM1200*FlMreal180*BuH0*BuP0*BuS0*ByH-901*ByP55000*ByS20000*asy*','*FrM1200*FlMreal180*BuH0*BuP0*BuS0*ByH-1800*ByP55000*ByS20000*asy*', '*FrM1200*FlMreal180*BuH0*BuP0*BuS0*ByH-675*ByP50000*ByS30000*']
 
-bottlenecks=['*FrM800*FlMreal120*BuH0*BuP0*BuS0*ByH-450*ByP55000*ByS20000*','*FrM1200*FlMreal180*BuH0*BuP0*BuS0*ByH-675*ByP55000*ByS20000*','*FrM1200*FlMreal180*BuH0*BuP0*BuS0*ByH-900*ByP55000*ByS20000*']
-
-bumps=['*FrM1200*FlMreal180*BuH120*BuP55000*BuS20000*ByH0*ByP0*ByS0*','*FrM1200*FlMreal180*BuH180*BuP55000*BuS20000*ByH0*ByP0*ByS0*','*FrM1200*FlMreal180*BuH240*BuP55000*BuS20000*ByH0*ByP0*ByS0*']
-
+bumps=['*FrM1200*FlMreal180*BuH180*BuP50000*BuS30000*ByH0*ByP0*ByS0*']
 
 megapat=[embayments, depressions,bottlenecks, bumps]
 
@@ -34,7 +32,7 @@ markdot=[]
 
 fs=16
 ls=12
-rc('text', usetex=True)
+#rc('text', usetex=True)
 for pattern in megapat:
     
     n=int(np.nonzero([x==pattern for x in megapat])[0])
@@ -65,15 +63,27 @@ for pattern in megapat:
         all_values_long=glue_runs(modpath)
         all_values=cutallpars(all_values_long, kw, 30000)
 
+        r=np.nonzero(pattern==np.intersect1d(pattern, p))[0]
         
         newstr = ''.join((ch if ch in '0123456789-' else ' ') for ch in p)
         lon = np.array([int(i) for i in newstr.split()])
+        wet_pat_all=lon[[2,3,4,5,6,7]]
         wet_pat=lon[[2,4,5,7]]
-        fj_chars, rfj_chars_GL, rfj_chars_mval, inds_dic_GL, inds_dic_mval = get_fjord(mod, all_values, AOI, pattern=wet_pat)
-
-
-        r=np.nonzero(pattern==np.intersect1d(pattern, p))[0]
-        z=n*3+r
+        if n == 0 or n == 2:
+            if r==0 or r == 2:
+                asy='yes'
+            else:
+                asy='no'
+        else:
+            asy='no'
+        if n == 0 or n == 2:
+            AOI=[wet_pat_all[4]+(wet_pat_all[5]/2), wet_pat_all[4]-(wet_pat_all[5]/2)]
+        if n == 1 or n ==3:
+            AOI=[wet_pat_all[1]+(wet_pat_all[2]/2), wet_pat_all[1]-(wet_pat_all[2]/2)]
+            
+        fj_chars, rfj_chars_GL, rfj_chars_mval, inds_dic_GL, inds_dic_mval = get_fjord(mod, all_values, AOI, pattern=wet_pat_all, asy=asy)
+        
+        z=n*10+r
 
         ### plotting ###
         
@@ -83,48 +93,40 @@ for pattern in megapat:
             palette='MediumBlue'
         if z==2:
             palette='DarkBlue'
-        if z==3:
-            palette='LightGreen'
-        if z==4:
+        if z ==10:
             palette='SeaGreen'
-        if z==5:
-            palette='DarkGreen'
-        if z==6:
+        if z==20:
             palette='Gold'
-        if z==7:
+        if z==21:
             palette='Orange'
-        if z==8:
+        if z==22:
             palette='Saddlebrown'
-        if z==9:
-            palette='Silver'
-        if z==10:
+        if z==30:
             palette='Gray'
-        if z==11:
-            palette='Black'
 
 
         plt.sca(ax0)
-        val_evol(palette, '','no', all_values['GroundinglineMassFlux'])
+        val_evol(palette, '','no', all_values['GroundinglineMassFlux'], marker='+')
         ylabel('$\it{\mathregular{Q_{GL}}}$ \n [km\u00b3/yr]', fontsize=fs)
         
         plt.sca(ax1)
-        val_evol(palette,'', 'no',all_values['dGL'])
+        val_evol(palette,'', 'no',all_values['dGL'], marker='+')
         ylabel('$\it{dGL}$ [m/yr]', fontsize=fs)
         
         plt.sca(ax2)
-        val_evol(palette, '','no',all_values['GLvel'])
+        val_evol(palette, '','no',all_values['GLvel'], marker='+')
         ylabel('$\it{\mathregular{V_{GL}}}$ [m/yr]', fontsize=fs)
         xlabel('Years', fontsize=fs)
         
         plt.sca(ax3)
-        val_evol(palette,'','no', ((np.array(all_values['TotalCalvingFluxLevelset'])/917)*31536000)/1e9)
+        val_evol(palette,'','no', ((np.array(all_values['TotalCalvingFluxLevelset'])/917)*31536000)/1e9, marker='+')
         ylabel('$\it{C}$ \n [km\u00b3/yr]', fontsize=fs)
         plt.sca(ax4)
-        val_evol(palette, '','no',np.array(all_values['IceVolume'])/1e9)
+        val_evol(palette, '','no',np.array(all_values['IceVolume'])/1e9, marker='+')
         ylabel('$\it{I}$ [km\u00b3]', fontsize=fs)
         
         plt.sca(ax5)
-        val_evol(palette, '','no',np.array(all_values['GLval'])/1000)
+        val_evol(palette, '','no',np.array(all_values['GLval'])/1000, marker='+')
         ylabel('$\it{\mathregular{x_{GL}}}$  [km]', fontsize=fs)
         xlabel('Years', fontsize=fs)
 

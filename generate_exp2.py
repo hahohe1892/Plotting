@@ -434,7 +434,7 @@ def findgateman(BuH, BuS, ByH, ByS):
         p=wetted_per(md, r, r+wetstep)
         p_list.append(p)
 
-def wets(x,bump_height, bump_spread, bay_height1, bay_spread1):
+def wets(x,bump_height, bump_spread, bay_height1, bay_spread1, GLthk=0, asy='no'):
     y_dim, x_dim, slope, dc, gap_halfwidth, step = standardvalues()
     bay_pos1=55000
     bump_pos=55000
@@ -445,7 +445,7 @@ def wets(x,bump_height, bump_spread, bay_height1, bay_spread1):
     bay=0
     bump=0
     acc=0
-    y=np.linspace(0,20000,20000)
+    y=np.linspace(0,20000,200000)
     if (x > bay_pos1-bay_spread1/2 and x < bay_pos1+bay_spread1/2):
         bay=-np.sin((x-bay_spread1/4-bay_pos1)*2*np.pi/bay_spread1)*.5*bay_height1+.5*bay_height1
     if (x > bump_pos-bump_spread/2 and x < bump_pos+bump_spread/2):
@@ -455,18 +455,73 @@ def wets(x,bump_height, bump_spread, bay_height1, bay_spread1):
 
 
     Bx=null_level+slope*x
-    By=(((dc-bump)/(1+np.exp(steepness*((y-5000)-y_dim/2+gap_halfwidth+bay+acc)))+(dc-bump)/(1+np.exp(-steepness*((y-5000)-y_dim/2-gap_halfwidth-bay-acc))))+Bx+bump)
+    if asy=='no':
+        By=(((dc-bump)/(1+np.exp(steepness*((y-5000)-y_dim/2+gap_halfwidth+bay+acc)))+(dc-bump)/(1+np.exp(-steepness*((y-5000)-y_dim/2-gap_halfwidth-bay-acc))))+Bx+bump)
+    if asy=='yes':
+        By=(((dc-bump)/(1+np.exp(steepness*((y-5000)-y_dim/2+gap_halfwidth+bay+acc)))+(dc-bump)/(1+np.exp(-steepness*((y-5000)-y_dim/2-gap_halfwidth-acc))))+Bx+bump)
 
-    q=np.where(By<0)[0]
-    y1=(((dc-bump)/(1+np.exp(steepness*((q-5000)-y_dim/2+gap_halfwidth+bay+acc)))+(dc-bump)/(1+np.exp(-steepness*((q-5000)-y_dim/2-gap_halfwidth-bay-acc))))+Bx+bump)
-    r=q+1
-    y2=(((dc-bump)/(1+np.exp(steepness*((r-5000)-y_dim/2+gap_halfwidth+bay+acc)))+(dc-bump)/(1+np.exp(-steepness*((r-5000)-y_dim/2-gap_halfwidth-bay-acc))))+Bx+bump)
-    dy=y1-y2
+    q=np.where(By<GLthk)[0]
+    if asy=='no':
+        y1=(((dc-bump)/(1+np.exp(steepness*((q-5000)-y_dim/2+gap_halfwidth+bay+acc)))+(dc-bump)/(1+np.exp(-steepness*((q-5000)-y_dim/2-gap_halfwidth-bay-acc))))+Bx+bump)
+        r=q+1
+        y2=(((dc-bump)/(1+np.exp(steepness*((r-5000)-y_dim/2+gap_halfwidth+bay+acc)))+(dc-bump)/(1+np.exp(-steepness*((r-5000)-y_dim/2-gap_halfwidth-bay-acc))))+Bx+bump)
+        dy=y1-y2
+    if asy=='yes':
+        y1=(((dc-bump)/(1+np.exp(steepness*((q-5000)-y_dim/2+gap_halfwidth+bay+acc)))+(dc-bump)/(1+np.exp(-steepness*((q-5000)-y_dim/2-gap_halfwidth-acc))))+Bx+bump)
+        r=q+1
+        y2=(((dc-bump)/(1+np.exp(steepness*((r-5000)-y_dim/2+gap_halfwidth+bay+acc)))+(dc-bump)/(1+np.exp(-steepness*((r-5000)-y_dim/2-gap_halfwidth-acc))))+Bx+bump)
+        dy=y1-y2
+
     ds=(np.sqrt(1+(dy**2)))
     wetted_per=np.sum(ds)
 
-    wetted_area=np.sum(By[np.where(By<0)])*-1
+    wetted_area=np.sum(By[np.where(By<GLthk)]-GLthk)*-1
 
-    return wetted_per, wetted_area, By, ds
+    return wetted_per/10, wetted_area/10, By, ds
+
+def wets_long(x,bump_height, bump_pos, bump_spread, bay_height1, bay_pos, bay_spread1, GLthk=0, asy='no'):
+    y_dim, x_dim, slope, dc, gap_halfwidth, step = standardvalues()
+    bay_pos1=bay_pos
+    bump_pos=bump_pos
+    acc_pos=30000
+    funnel=300
+    null_level=-450
+    steepness=1./300
+    bay=0
+    bump=0
+    acc=0
+    y=np.linspace(0,20000,200000)
+    if (x > bay_pos1-bay_spread1/2 and x < bay_pos1+bay_spread1/2):
+        bay=-np.sin((x-bay_spread1/4-bay_pos1)*2*np.pi/bay_spread1)*.5*bay_height1+.5*bay_height1
+    if (x > bump_pos-bump_spread/2 and x < bump_pos+bump_spread/2):
+        bump=-np.sin((x-bump_spread/4-bump_pos)*2*np.pi/bump_spread)*.5*bump_height+.5*bump_height
+    if x<acc_pos:
+        acc=((x-acc_pos)/funnel)**2
+
+
+    Bx=null_level+slope*x
+    if asy=='no':
+        By=(((dc-bump)/(1+np.exp(steepness*((y-5000)-y_dim/2+gap_halfwidth+bay+acc)))+(dc-bump)/(1+np.exp(-steepness*((y-5000)-y_dim/2-gap_halfwidth-bay-acc))))+Bx+bump)
+    if asy=='yes':
+        By=(((dc-bump)/(1+np.exp(steepness*((y-5000)-y_dim/2+gap_halfwidth+bay+acc)))+(dc-bump)/(1+np.exp(-steepness*((y-5000)-y_dim/2-gap_halfwidth-acc))))+Bx+bump)
+
+    q=np.where(By<GLthk)[0]
+    if asy=='no':
+        y1=(((dc-bump)/(1+np.exp(steepness*((q-5000)-y_dim/2+gap_halfwidth+bay+acc)))+(dc-bump)/(1+np.exp(-steepness*((q-5000)-y_dim/2-gap_halfwidth-bay-acc))))+Bx+bump)
+        r=q+1
+        y2=(((dc-bump)/(1+np.exp(steepness*((r-5000)-y_dim/2+gap_halfwidth+bay+acc)))+(dc-bump)/(1+np.exp(-steepness*((r-5000)-y_dim/2-gap_halfwidth-bay-acc))))+Bx+bump)
+        dy=y1-y2
+    if asy=='yes':
+        y1=(((dc-bump)/(1+np.exp(steepness*((q-5000)-y_dim/2+gap_halfwidth+bay+acc)))+(dc-bump)/(1+np.exp(-steepness*((q-5000)-y_dim/2-gap_halfwidth-acc))))+Bx+bump)
+        r=q+1
+        y2=(((dc-bump)/(1+np.exp(steepness*((r-5000)-y_dim/2+gap_halfwidth+bay+acc)))+(dc-bump)/(1+np.exp(-steepness*((r-5000)-y_dim/2-gap_halfwidth-acc))))+Bx+bump)
+        dy=y1-y2
+
+    ds=(np.sqrt(1+(dy**2)))
+    wetted_per=np.sum(ds)
+
+    wetted_area=np.sum(By[np.where(By<GLthk)]-GLthk)*-1
+
+    return wetted_per/10, wetted_area/10, By, ds
 
 

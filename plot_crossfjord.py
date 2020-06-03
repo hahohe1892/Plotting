@@ -1,0 +1,10 @@
+from generate_exp2 import *
+plot(wets(50000,0,0,0,0)[2], color='black')
+plot(wets(50000,240,20000,0,0)[2], color='Gray')
+plot(wets(50000,-360, 20000,0,0)[2], color='Green')
+plot(wets(50000,0,0,-900,20000)[2], color='orange')
+plot(wets(50000,0,0,1350, 20000)[2], color='blue')
+xlim(50000,150000)
+xlabel('y-coordinates [km]')
+ylabel('z [m]')
+xticks([50000,75000,100000,125000,150000], [0, 2.5, 5, 7.5, 10])

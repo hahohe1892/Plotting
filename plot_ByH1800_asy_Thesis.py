@@ -18,7 +18,7 @@ from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from basaldrag import *
 from drivingstress import *
 from slope import *
-pattern=['*FrM1200*FlMreal180*ByH900*ByS20*.nc']
+pattern=[ '*FrM1200*FlMreal180*BuH0*BuP0*BuS0*ByH1800*ByP55000*ByS20000*asy*']
 
 AOI=False
 
@@ -28,13 +28,13 @@ for p in pattern:
     mod=glue_runs_md(modpath)
     all_values=glue_runs(modpath)
 
-cut=90
+cut=0
 markdot=[]
 colors_w=getcolors(len(mod.results.TransientSolution)-cut, 'viridis')
 norm = mpl.colors.Normalize(vmin=0, vmax=len(mod.results.TransientSolution)-cut)
 colors_s=getcolors(len(mod.results.TransientSolution), 'autumn')
 intervall=1
-fj_chars, rfj_chars_GL, rfj_chars_mval, inds_dic_GL, inds_dic_mval = get_fjord(mod, all_values, AOI=False)
+fj_chars, rfj_chars_GL, rfj_chars_mval, inds_dic_GL, inds_dic_mval = get_fjord(mod, all_values, AOI=False, asy='yes')
 
 ### animation
 

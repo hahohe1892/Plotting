@@ -18,17 +18,17 @@ from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from basaldrag import *
 from drivingstress import *
 from slope import *
-pattern=['*FrM1200*FlMreal180*ByH900*ByS20*.nc']
+pattern=['*FrM1200*FlMreal180*BuH0*BuP0*BuS0*ByH-901*ByP55000*ByS20000*asy*']
 
 AOI=False
 
 for p in pattern:
-    modpath='./Models/embayments/'+p
+    modpath='./Models/bottlenecks/'+p
 
     mod=glue_runs_md(modpath)
     all_values=glue_runs(modpath)
 
-cut=90
+cut=30
 markdot=[]
 colors_w=getcolors(len(mod.results.TransientSolution)-cut, 'viridis')
 norm = mpl.colors.Normalize(vmin=0, vmax=len(mod.results.TransientSolution)-cut)
@@ -37,7 +37,6 @@ intervall=1
 fj_chars, rfj_chars_GL, rfj_chars_mval, inds_dic_GL, inds_dic_mval = get_fjord(mod, all_values, AOI=False)
 
 ### animation
-
 fs=16
 ls=12
 
@@ -85,10 +84,7 @@ plt.sca(ax0)
 plotcontour(mod, mod.geometry.bed, levels=[0], colors='black', linewidths=2)
 
 ### arrange window first
-plt.savefig("./Figures/Thesis/embayment_overview_new.svg")
-
-
-
+plt.savefig("./Figures/Thesis/bottleneck_overview_new.svg")   
     
 plt.sca(ax1)
 along_evol(mod, 'viridis','','no',-cut,'Surface','Base', linewidth=0.8)

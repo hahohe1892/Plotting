@@ -37,6 +37,8 @@ intervall=1
 fj_chars, rfj_chars_GL, rfj_chars_mval, inds_dic_GL, inds_dic_mval = get_fjord(mod, all_values, AOI=False)
 
 ### animation
+fs=16
+ls=12
 
 fig = plt.figure()#dpi=400)
 gs = GridSpec(nrows=3, ncols=20)
@@ -48,7 +50,12 @@ ax0.set_xticklabels([])
 ax1.set_xticklabels([])
 ax2.set_xticklabels(range(0,85,10))
 ax3 = fig.add_subplot(gs[:,-1])
-cb1 = mpl.colorbar.ColorbarBase(ax3, cmap=mpl.cm.viridis, norm=norm, label='Years', orientation='vertical')
+cb1 = mpl.colorbar.ColorbarBase(ax3, cmap=mpl.cm.viridis, norm=norm, orientation='vertical')
+ylabel('Years', fontsize=fs)
+ax0.tick_params(axis='both', which='major', labelsize=ls)
+ax1.tick_params(axis='both', which='major', labelsize=ls)
+ax2.tick_params(axis='both', which='major', labelsize=ls)
+ax3.tick_params(axis='both', which='major', labelsize=ls)
 
 for q in range(0,len(mod.results.TransientSolution)-cut,intervall):
     plt.sca(ax1)
@@ -57,25 +64,26 @@ for q in range(0,len(mod.results.TransientSolution)-cut,intervall):
     hlines(0,0,85000, color='lightgrey')
     greybox()
     xlim(0,85000)
-    ylabel('z [m]')
-    xlabel('along-flow distance [km]')
+    ylabel('z [m]', fontsize=fs)
     plt.sca(ax0)
     plotcontour(mod, mod.results.TransientSolution[q].MaskGroundediceLevelset, levels=[0], colors=colors_w[q].reshape(-1,4))
-    plotcontour(mod, mod.geometry.bed, levels=[0], colors='black')
+    #plotcontour(mod, mod.geometry.bed, levels=[0], colors='black')
     #plotcontour(mod, mod.results.TransientSolution[q].MaskIceLevelset, levels=[0], colors='red')
     ylim(10000,20000)
-    ylabel('across-flow distance [km]')
+    ylabel('y-coordinates [km]', fontsize=fs)
     ax0.set_yticklabels(range(0,11,2))
     #ax0.text(75000, 20100, 'Year {}'.format(q), fontsize=14)
     greybox()
     plt.sca(ax2)
     along_vel(mod, mod.results.TransientSolution[q].Vel, color=colors_w[q], linewidth=0.8)
     greybox()
-    xlabel('along-flow distance [km]')
+    xlabel('x-coordinates [km]', fontsize=fs)
     xlim(0,85000)
-    ylabel('V [m/a]')
-
-    #camera.snap()
+    ylabel('V [m/yr]', fontsize=fs)
+plt.sca(ax0)
+plotcontour(mod, mod.geometry.bed, levels=[0], colors='black', linewidths=2)
+### arrange window first
+plt.savefig("./Figures/Thesis/bumps_overview_new.svg")   
     
 plt.sca(ax1)
 along_evol(mod, 'viridis','','no',-cut,'Surface','Base', linewidth=0.8)

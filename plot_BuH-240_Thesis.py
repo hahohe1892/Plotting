@@ -47,7 +47,8 @@ alongr=np.where(np.logical_and(mod.mesh.y<=15050, mod.mesh.y>=14950))
 array=np.array((mod.mesh.x[alongr], np.squeeze(mod.geometry.bed[alongr]))) 
 ind=np.argsort(array[0])  
 array=array[:,ind]
-
+fs=16
+ls=12
 
 triangles=mpl.tri.Triangulation(mod.mesh.x, mod.mesh.y, mod.mesh.elements-1)
 fig= plt.figure()
@@ -139,7 +140,7 @@ along_evol(mod, 'viridis','','no',-1,'Surface','Base', linewidth=0.8)
 hlines(0,0,85000, color='lightgrey')
 axvspan(begin,end, color='gainsboro', alpha=0.5)
 xlim(0,85000)
-ylabel('z [m]')
+ylabel('z [m]', fontsize=fs)
 
 axins = inset_axes(ax1, width=1.3, height=0.9)
 #ax10 = plt.axes([0,0,1,1])
@@ -154,24 +155,24 @@ hlines(0,0,85000, color='lightgrey')
 xlim(40000,75000)
 axvspan(begin,end, color='gainsboro', alpha=0.5)
 ylim(-850,500)
-plt.yticks(fontsize=6)
-plt.xticks(fontsize=6)
+plt.yticks(fontsize=8)
+plt.xticks(fontsize=8)
 yticks([-500,0,500], [-500,0,500])
 xticks([45000,55000,65000,75000],[45,55,65,75])
 
 plt.sca(ax2)
 for q in range(0,len(mod.results.TransientSolution)-20,intervall):
     along_vel(mod, mod.results.TransientSolution[q].Vel, color=colors_w[q], linewidth=0.8)
-xlabel('x-coordinates [km]')
+xlabel('x-coordinates [km]', fontsize=fs)
 xlim(0,85000)
-ylabel('V [m/a]')
+ylabel('V [m/yr]', fontsize=fs)
 axvspan(begin,end, color='gainsboro', alpha=0.5)
 plt.sca(ax0)
 cont_all(mod, 'GL',1, 'nobar', linewidths=0.8)
 plotcontour(mod, mod.geometry.bed, levels=[0], linewidths=0.8)
 axvspan(begin,end, color='gainsboro', alpha=0.5)
 ylim(10000,20000)
-ylabel('y-coordinates [km]')
+ylabel('y-coordinates [km]', fontsize=fs)
 ax0.set_yticklabels(range(0,11,2))
 
 axins1 = ax0.inset_axes([0.025, 0.3, 0.25, 0.4])
@@ -186,12 +187,17 @@ xticks([0,25000,50000,75000],[0,25,50,75],fontsize=6)
 #ax1.text(0.9, 0.85, 'Shape Profile', color='black', transform=ax1.transAxes,horizontalalignment='center', weight='bold')
 #ax2.text(0.9, 0.85, 'Velocity Profile', color='black', transform=ax2.transAxes, horizontalalignment='center', weight='bold')
 ax3 = fig.add_subplot(gs[:,-1])
-cb1 = mpl.colorbar.ColorbarBase(ax3, cmap=mpl.cm.viridis, norm=norm, label='Years', orientation='vertical')
+cb1 = mpl.colorbar.ColorbarBase(ax3, cmap=mpl.cm.viridis, norm=norm, orientation='vertical')
+ylabel('Years', fontsize=fs)
 ax0.set_xticklabels([])
 ax1.set_xticklabels([])
 ax2.set_xticklabels(range(0,85,10))
-
-
+ax0.tick_params(axis='both', which='major', labelsize=ls)
+ax1.tick_params(axis='both', which='major', labelsize=ls)
+ax2.tick_params(axis='both', which='major', labelsize=ls)
+ax3.tick_params(axis='both', which='major', labelsize=ls) 
+### arrange window first
+plt.savefig("./Figures/Thesis/depression_overview_new.svg")
 
 ### animation
 for i in range(0,len(mod.results.TransientSolution)-0,intervall):
