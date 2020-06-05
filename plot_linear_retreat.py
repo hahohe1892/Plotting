@@ -18,6 +18,7 @@ from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from basaldrag import *
 from drivingstress import *
 from slope import *
+from matplotlib import colors
 
 AOI=False
 
@@ -100,27 +101,40 @@ palette='viridis'
 plt.sca(ax0)
 val_evol(palette, '','no', all_values['GroundinglineMassFlux'])
 ylabel('$\it{\mathregular{Q_{GL}}}$ \n [km\u00b3/yr]', fontsize=fs)
+plt.plot([], label='a)')
+plt.legend(handlelength=0, frameon=False, fontsize=fs)
 
 plt.sca(ax1)
 val_evol(palette,'', 'no',all_values['dGL'])
 ylabel('$\it{dGL}$ [m/yr]', fontsize=fs)
+plt.plot([], label='b)')
+plt.legend(handlelength=0, frameon=False, fontsize=fs)
 
 plt.sca(ax2)
 val_evol(palette, '','no',all_values['GLvel'])
 ylabel('$\it{\mathregular{V_{GL}}}$ [m/yr]', fontsize=fs)
 xlabel('Years', fontsize=fs)
+plt.plot([], label='c)')
+plt.legend(handlelength=0, frameon=False, fontsize=fs)
 
 plt.sca(ax3)
 val_evol(palette,'','no', ((np.array(all_values['TotalCalvingFluxLevelset'])/917)*31536000)/1e9)
 ylabel('$\it{C}$ \n [km\u00b3/yr]', fontsize=fs)
+plt.plot([], label='d)')
+plt.legend(handlelength=0, frameon=False, fontsize=fs)
+
 plt.sca(ax4)
 val_evol(palette, '','no',np.array(all_values['IceVolume'])/1e9)
 ylabel('$\it{I}$ [km\u00b3]', fontsize=fs)
+plt.plot([], label='e)')
+plt.legend(handlelength=0, frameon=False, fontsize=fs)
 
 plt.sca(ax5)
 val_evol(palette, '','no',np.array(all_values['GLval'])/1000)
 ylabel('$\it{\mathregular{x_{GL}}}$  [km]', fontsize=fs)
 xlabel('Years', fontsize=fs)
+plt.plot([], label='f)')
+plt.legend(handlelength=0, frameon=False, fontsize=fs)
 
 ax0.set_xticklabels([])
 ax1.set_xticklabels([])
@@ -137,3 +151,32 @@ ax5.yaxis.tick_right()
 for a in gcf().axes:
     a.yaxis.set_major_locator(plt.MaxNLocator(4))
 subplots_adjust(hspace=0.5)
+
+
+fs=15
+l=12
+fig = plt.figure()
+gs = GridSpec(nrows=1, ncols=11)
+triangles=mpl.tri.Triangulation(mod.mesh.x, mod.mesh.y, mod.mesh.elements-1)
+vmin=-200000
+vmax=200000
+i=120    ### 120 for embayment, bump and depression, 12 for bottleneck
+ds=drivingstress(mod, mod.results.TransientSolution[i].Surface, mod.results.TransientSolution[i].Thickness)[0]
+bd=basal_drag(mod, mod.results.TransientSolution[i].Thickness, mod.results.TransientSolution[i].Base, mod.results.TransientSolution[i].Vx)[0]
+ls=ds-bd
+ax=fig.add_subplot(gs[:,1:10])
+tripcolor(triangles, (ls).flatten(), vmin=vmin, vmax=vmax, cmap='RdYlBu_r')
+xlim(35000,75000)
+ylim(10000,19000)
+plotcontour(mod, mod.results.TransientSolution[i].MaskGroundediceLevelset, levels=[0], colors='green', linewidths=2)
+plotcontour(mod, mod.results.TransientSolution[i].Thickness, levels=[10], colors='black', linewidths=2)
+yticks([12000,15000,18000], [2,5,8], fontsize=l)
+xticks([35000,45000,55000,65000,75000],[35,45,55,65,75], fontsize=l)
+xlabel('along-flow Distance [km]', fontsize=fs)
+ylabel('across-flow Distance [km]', fontsize=fs)
+ax21 = fig.add_subplot(gs[:,10])
+norm = colors.Normalize(vmin=vmin/1000, vmax=vmax/1000)
+cb1 = mpl.colorbar.ColorbarBase(ax21, cmap=mpl.cm.RdYlBu_r, norm=norm, orientation='vertical')
+xticks(fontsize=l)
+ylabel('Longitudinal Stress [kPa]', fontsize=fs)
+yticks(fontsize=l)

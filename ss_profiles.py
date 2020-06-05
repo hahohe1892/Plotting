@@ -23,7 +23,7 @@ paths=[ 'embayments/', 'depressions/', 'bottlenecks/','bumps/']
 
 loadpath='./Models/'
 
-fs=16
+fs=15
 ls=12
 
 fig, ax = plt.subplots(3,1)
@@ -58,10 +58,10 @@ for p in megapat:
     #    palette='DeepPink'
     #    marker='--'
     if z==3:
-        palette='SkyBlue'
+        palette='lightblue'
         marker='-'
     if z==4:
-        palette='MediumBlue'
+        palette='cornflowerblue'
     if z==5:
         palette='DarkBlue'
     #if z==8:
@@ -71,14 +71,14 @@ for p in megapat:
     #    palette='DarkBlue'
     #    marker='--'
     if z==6:
-        palette='LightGreen'
+        palette='palegreen'
         marker='-'
     if z==7:
-        palette='SeaGreen'
+        palette='mediumseagreen'
     if z==8:
         palette='DarkGreen'
     if z==9:
-        palette='Silver'
+        palette='lightgray'
     if z==10:
         palette='Gray'
     if z==11:

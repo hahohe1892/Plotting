@@ -32,7 +32,7 @@ AOI=False
 
 markdot=[]
 
-fs=16
+fs=15
 ls=12
 rc('text', usetex=True)
 for pattern in megapat:
@@ -78,15 +78,15 @@ for pattern in megapat:
         ### plotting ###
         
         if z==0:
-            palette='SkyBlue'
+            palette='lightblue'
         if z==1:
-            palette='MediumBlue'
+            palette='cornflowerblue'
         if z==2:
             palette='DarkBlue'
         if z==3:
-            palette='LightGreen'
+            palette='palegreen'
         if z==4:
-            palette='SeaGreen'
+            palette='mediumseagreen'
         if z==5:
             palette='DarkGreen'
         if z==6:
@@ -96,7 +96,7 @@ for pattern in megapat:
         if z==8:
             palette='Saddlebrown'
         if z==9:
-            palette='Silver'
+            palette='lightgray'
         if z==10:
             palette='Gray'
         if z==11:
@@ -105,28 +105,47 @@ for pattern in megapat:
 
         plt.sca(ax0)
         val_evol(palette, '','no', all_values['GroundinglineMassFlux'])
-        ylabel('$\it{\mathregular{Q_{GL}}}$ \n [km\u00b3/yr]', fontsize=fs)
+        ylabel('$\it{\mathregular{Q_{GL}}}$ [km\u00b3/yr]', fontsize=fs)
+        if r==2:
+            plt.plot([], label='a)')
+            plt.legend(handlelength=0, frameon=False, fontsize=fs)
         
         plt.sca(ax1)
         val_evol(palette,'', 'no',all_values['dGL'])
         ylabel('$\it{dGL}$ [m/yr]', fontsize=fs)
+        if r==2:
+            plt.plot([], label='b)')
+            plt.legend(handlelength=0, fontsize=fs, frameon=False)
         
         plt.sca(ax2)
         val_evol(palette, '','no',all_values['GLvel'])
         ylabel('$\it{\mathregular{V_{GL}}}$ [m/yr]', fontsize=fs)
         xlabel('Years', fontsize=fs)
+        if r==2:
+            plt.plot([], label='c)')
+            plt.legend(handlelength=0, fontsize=fs, frameon=False)
         
         plt.sca(ax3)
         val_evol(palette,'','no', ((np.array(all_values['TotalCalvingFluxLevelset'])/917)*31536000)/1e9)
-        ylabel('$\it{C}$ \n [km\u00b3/yr]', fontsize=fs)
+        ylabel('$\it{C}$ [km\u00b3/yr]', fontsize=fs)
+        if r==2:
+            plt.plot([], label='d)')
+            plt.legend(handlelength=0, fontsize=fs, frameon=False)
+            
         plt.sca(ax4)
         val_evol(palette, '','no',np.array(all_values['IceVolume'])/1e9)
         ylabel('$\it{I}$ [km\u00b3]', fontsize=fs)
-        
+        if r==2:
+            plt.plot([], label='e)')
+            plt.legend(handlelength=0, fontsize=fs, frameon=False)
+
         plt.sca(ax5)
         val_evol(palette, '','no',np.array(all_values['GLval'])/1000)
         ylabel('$\it{\mathregular{x_{GL}}}$  [km]', fontsize=fs)
         xlabel('Years', fontsize=fs)
+        if r==2:
+            plt.plot([], label='f)')
+            plt.legend(handlelength=0, fontsize=fs, frameon=False)
 
     ax0.set_xticklabels([])
     ax1.set_xticklabels([])
@@ -142,6 +161,7 @@ for pattern in megapat:
 
     for a in gcf().axes:
         a.yaxis.set_major_locator(plt.MaxNLocator(4))
+
     subplots_adjust(hspace=0.5)
     
     ax5.axhspan(45,65, color='lightgrey', alpha=0.5, zorder=-1)

@@ -30,7 +30,7 @@ AOI=False
 
 markdot=[]
 
-fs=16
+fs=15
 ls=12
 #rc('text', usetex=True)
 for pattern in megapat:
@@ -107,29 +107,48 @@ for pattern in megapat:
 
         plt.sca(ax0)
         val_evol(palette, '','no', all_values['GroundinglineMassFlux'], marker='+')
-        ylabel('$\it{\mathregular{Q_{GL}}}$ \n [km\u00b3/yr]', fontsize=fs)
-        
+        ylabel('$\it{\mathregular{Q_{GL}}}$ [km\u00b3/yr]', fontsize=fs)
+        if r==2:
+            plt.plot([], label='a)')
+            plt.legend(handlelength=0, frameon=False, fontsize=fs)
+            
         plt.sca(ax1)
         val_evol(palette,'', 'no',all_values['dGL'], marker='+')
         ylabel('$\it{dGL}$ [m/yr]', fontsize=fs)
-        
+        if r==2:
+            plt.plot([], label='b)')
+            plt.legend(handlelength=0, fontsize=fs, frameon=False)
+            
         plt.sca(ax2)
         val_evol(palette, '','no',all_values['GLvel'], marker='+')
         ylabel('$\it{\mathregular{V_{GL}}}$ [m/yr]', fontsize=fs)
         xlabel('Years', fontsize=fs)
-        
+        if r==2:
+            plt.plot([], label='c)')
+            plt.legend(handlelength=0, fontsize=fs, frameon=False)
+            
         plt.sca(ax3)
         val_evol(palette,'','no', ((np.array(all_values['TotalCalvingFluxLevelset'])/917)*31536000)/1e9, marker='+')
-        ylabel('$\it{C}$ \n [km\u00b3/yr]', fontsize=fs)
+        ylabel('$\it{C}$ [km\u00b3/yr]', fontsize=fs)
+        if r==2:
+            plt.plot([], label='d)')
+            plt.legend(handlelength=0, fontsize=fs, frameon=False)
+            
         plt.sca(ax4)
         val_evol(palette, '','no',np.array(all_values['IceVolume'])/1e9, marker='+')
         ylabel('$\it{I}$ [km\u00b3]', fontsize=fs)
-        
+        if r==2:
+            plt.plot([], label='e)')
+            plt.legend(handlelength=0, fontsize=fs, frameon=False)
+            
         plt.sca(ax5)
         val_evol(palette, '','no',np.array(all_values['GLval'])/1000, marker='+')
         ylabel('$\it{\mathregular{x_{GL}}}$  [km]', fontsize=fs)
         xlabel('Years', fontsize=fs)
-
+        if r==2:
+            plt.plot([], label='f)')
+            plt.legend(handlelength=0, fontsize=fs, frameon=False)
+            
     ax0.set_xticklabels([])
     ax1.set_xticklabels([])
     ax3.set_xticklabels([])

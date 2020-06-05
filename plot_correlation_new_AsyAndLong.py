@@ -28,6 +28,8 @@ paths=[ 'embayments/', 'depressions/', 'bottlenecks/','bumps/']
 
 kw=['GroundinglineMassFlux', 'dGL', 'GLvel', 'TotalCalvingFluxLevelset', 'IceVolume', 'GLval']
 
+fs=14
+
 markdot=[]
 
 ax=[]
@@ -103,45 +105,53 @@ for pattern in megapat:
         ### plotting ###
         
         if z==0:
-            palette='SkyBlue'
+            palette='lightblue'
+            marker='.'
         if z==1:
-            palette='MediumBlue'
+            palette='cornflowerblue'
         if z==2:
             palette='DarkBlue'
         if z==3:
             palette='LightPink'
+            marker='+'
         if z==4:
             palette='Violet'
         if z==5:
             palette='Red'        
         if z==10:
-            palette='LightGreen'
+            palette='palegreen'
+            marker='.'
         if z==11:
-            palette='SeaGreen'
+            palette='mediumseagreen'
         if z==12:
             palette='DarkGreen'
         if z==13:
             palette='Red'
+            marker='+'
         if z==20:
             palette='Gold'
+            marker='.'
         if z==21:
             palette='Orange'
         if z==22:
             palette='Saddlebrown'
         if z==23:
             palette='LightPink'
+            marker='+'
         if z==24:
             palette='Violet'
         if z==25:
             palette='Red'        
         if z==30:
-            palette='Silver'
+            palette='lightgray'
+            marker='.'
         if z==31:
             palette='Gray'
         if z==32:
             palette='Black'
         if z==33:
             palette='Red'
+            marker='+'
 
         ### GL Flux over dWA ### 
         plt.sca(ax[n])
@@ -154,8 +164,20 @@ for pattern in megapat:
         
         inds_dic_GL['dWA']=np.array(inds_dic_GL['dWA'])[np.array(inds_dic_GL['dWA'])<len(all_values['GroundinglineMassFlux'])]
         par=np.array(all_values['GroundinglineMassFlux'])[inds_dic_GL['dWA']]
-        plt.scatter(rfj_chars_GL['dWA'],par,color=palette)
+        plt.scatter(rfj_chars_GL['dWA'],par,color=palette, marker=marker)
         grid(True)
+        if z==5:
+            plt.plot([], label='embayments')
+            plt.legend(handlelength=0, fontsize=fs, frameon=False, prop={'weight':'bold'})
+        if z==13:
+            plt.plot([], label='depressions')
+            plt.legend(handlelength=0, fontsize=fs, frameon=False, prop={'weight':'bold'})
+        if z==25:
+            plt.plot([], label='bottlenecks')
+            plt.legend(handlelength=0, fontsize=fs, frameon=False, prop={'weight':'bold'})
+        if z==33:
+            plt.plot([], label='bumps')
+            plt.legend(handlelength=0, fontsize=fs, frameon=False, prop={'weight':'bold'})
 
         ### GLvel over dWA ### 
         plt.sca(ax2[n])
@@ -167,8 +189,20 @@ for pattern in megapat:
         ylabel('$\mathregular{V_{GL}}$ [m/yr]')
         
         par=np.array(all_values['GLvel'])[inds_dic_GL['dWA']]
-        plt.scatter(rfj_chars_GL['dWA'], par,color=palette)
+        plt.scatter(rfj_chars_GL['dWA'], par,color=palette, marker=marker)
         grid(True)
+        if z==5:
+            plt.plot([], label='embayments')
+            plt.legend(handlelength=0, fontsize=fs, frameon=False, prop={'weight':'bold'})
+        if z==13:
+            plt.plot([], label='depressions')
+            plt.legend(handlelength=0, fontsize=fs, frameon=False, prop={'weight':'bold'})
+        if z==25:
+            plt.plot([], label='bottlenecks')
+            plt.legend(handlelength=0, fontsize=fs, frameon=False, prop={'weight':'bold'})
+        if z==33:
+            plt.plot([], label='bumps')
+            plt.legend(handlelength=0, fontsize=fs, frameon=False, prop={'weight':'bold'})
 
         ### dGL over WA ###
         plt.sca(ax3[n])
@@ -181,6 +215,17 @@ for pattern in megapat:
         
         inds_dic_GL['WA']=np.array(inds_dic_GL['WA'])[np.array(inds_dic_GL['WA'])<len(all_values['dGL'])]
         par=np.array(all_values['dGL'])[inds_dic_GL['WA']]
-        plt.scatter(np.array(rfj_chars_GL['WA'])/1e6,par,color=palette)
-        grid(True)
-    
+        plt.scatter(np.array(rfj_chars_GL['WA'])/1e6,par,color=palette, marker=marker)
+        grid(True)  
+        if z==5:
+            plt.plot([], label='embayments')
+            plt.legend(handlelength=0, fontsize=fs, frameon=False, prop={'weight':'bold'})
+        if z==13:
+            plt.plot([], label='depressions')
+            plt.legend(handlelength=0, fontsize=fs, frameon=False, prop={'weight':'bold'})
+        if z==25:
+            plt.plot([], label='bottlenecks')
+            plt.legend(handlelength=0, fontsize=fs, frameon=False, prop={'weight':'bold'})
+        if z==33:
+            plt.plot([], label='bumps')
+            plt.legend(handlelength=0, fontsize=fs, frameon=False, prop={'weight':'bold'})

@@ -24,6 +24,8 @@ bumps=['*FrM1200*FlMreal180*BuH120*BuP55000*BuS20000*ByH0*ByP0*ByS0*','*FrM1200*
 
 megapat=[embayments, depressions,bottlenecks, bumps]
 
+txt=['d','d', 'embayments', 'd','d','depressions','d','d', 'bottlenecks','d','d','bumps']
+
 paths=[ 'embayments/', 'depressions/', 'bottlenecks/','bumps/']
 
 kw=['GroundinglineMassFlux', 'dGL', 'GLvel', 'TotalCalvingFluxLevelset', 'IceVolume', 'GLval']
@@ -31,6 +33,8 @@ kw=['GroundinglineMassFlux', 'dGL', 'GLvel', 'TotalCalvingFluxLevelset', 'IceVol
 AOI=True
 
 markdot=[]
+
+fs=14
 
 ax=[]
 fig = plt.figure()
@@ -92,15 +96,15 @@ for pattern in megapat:
         ### plotting ###
         
         if z==0:
-            palette='SkyBlue'
+            palette='lightblue'
         if z==1:
-            palette='MediumBlue'
+            palette='cornflowerblue'
         if z==2:
             palette='DarkBlue'
         if z==3:
-            palette='LightGreen'
+            palette='palegreen'
         if z==4:
-            palette='SeaGreen'
+            palette='mediumseagreen'
         if z==5:
             palette='DarkGreen'
         if z==6:
@@ -110,7 +114,7 @@ for pattern in megapat:
         if z==8:
             palette='Saddlebrown'
         if z==9:
-            palette='Silver'
+            palette='lightgray'
         if z==10:
             palette='Gray'
         if z==11:
@@ -124,12 +128,16 @@ for pattern in megapat:
         if n == 2 or n == 3:
             xlabel('dS [m\u00b2/100m]')
         ylabel('$\mathregular{Q_{GL}}$ [km\u00b3/yr]')
+
         
         inds_dic_GL['dWA']=np.array(inds_dic_GL['dWA'])[np.array(inds_dic_GL['dWA'])<len(all_values['GroundinglineMassFlux'])]
         par=np.array(all_values['GroundinglineMassFlux'])[inds_dic_GL['dWA']]
         plt.scatter(rfj_chars_GL['dWA'],par,color=palette)
         grid(True)
-
+        if r==2:
+            plt.plot([], label=txt[z[0]])
+            plt.legend(handlelength=0, fontsize=fs, frameon=False,prop={'weight':'bold'})
+            
         ### GLvel over dWA ### 
         plt.sca(ax2[n])
         #xlim(-26000,26000)
@@ -137,12 +145,14 @@ for pattern in megapat:
         
         if n == 2 or n == 3:
             xlabel('dS [m\u00b2/100m]')
-        ylabel('$\mathregular{V_{GL}}$ [m/yr]')
-        
+        ylabel('$\mathregular{V_{GL}}$ [m/yr]')            
         par=np.array(all_values['GLvel'])[inds_dic_GL['dWA']]
         plt.scatter(rfj_chars_GL['dWA'], par,color=palette)
         grid(True)
-
+        if r==2:
+            plt.plot([], label=txt[z[0]])
+            plt.legend(handlelength=0, fontsize=fs, frameon=False,prop={'weight':'bold'})
+            
         ### dGL over WA ###
         plt.sca(ax3[n])
         #xlim(1,3.5)
@@ -156,4 +166,6 @@ for pattern in megapat:
         par=np.array(all_values['dGL'])[inds_dic_GL['WA']]
         plt.scatter(np.array(rfj_chars_GL['WA'])/1e6,par,color=palette)
         grid(True)
-    
+        if r==2:
+            plt.plot([], label=txt[z[0]])
+            plt.legend(handlelength=0, fontsize=fs, frameon=False, prop={'weight':'bold'})    

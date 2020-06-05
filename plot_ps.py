@@ -53,23 +53,23 @@ for p in megapat:
     if z==2:
         palette='Saddlebrown'
     if z==3:
-        palette='SkyBlue'
+        palette='lightblue'
         marker='--'
     if z==4:
-        palette='MediumBlue'
+        palette='cornflowerblue'
         marker='--'
     if z==5:
         palette='DarkBlue'
         marker='-'
     if z==6:
-        palette='LightGreen'
+        palette='palegreen'
         marker='-'
     if z==7:
-        palette='SeaGreen'
+        palette='mediumseagreen'
     if z==8:
         palette='DarkGreen'
     if z==9:
-        palette='Silver'
+        palette='lightgray'
     if z==10:
         palette='Gray'
     if z==11:
@@ -101,7 +101,7 @@ for p in megapat:
         ax[1][1].yaxis.tick_right()
     plot(x[:-1], np.array(dwa)*-1, color=palette, linestyle='-')
     ylabel('dS [m\u00b2]')
-    xlabel('Distance [km]')
+    xlabel('x-coordinates [km]')
     xlim(20,85)
     ylim(-55000,55000)
 #    plt.sca(ax2)

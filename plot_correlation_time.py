@@ -166,7 +166,7 @@ for pattern in megapat:
         
         inds_dic_GL['WA']=np.array(inds_dic_GL['WA'])[np.array(inds_dic_GL['WA'])<len(all_values['dGL'])]
         par=np.array(all_values['dGL'])[inds_dic_GL['WA']]
-        scatter_pos(rfj_chars_GL['dWA'],'viridis', [],par)
+        scatter_pos(rfj_chars_GL['WA'],'viridis', [],par)
         axins = inset_axes(ax3[n], width=.3, height=0.9, loc=3)
         cb1 = mpl.colorbar.ColorbarBase(axins, cmap=mpl.cm.viridis, norm=norm, orientation='vertical')
   
