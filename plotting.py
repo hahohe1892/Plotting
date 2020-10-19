@@ -216,7 +216,7 @@ def across_evol(md, palette, limit1, limit2, *args):
 
   
 
-def val_evol(palette, title, bar='no',*args, **kwargs): 
+def val_evol(palette, title, bar='no', *args, **kwargs): 
 
     for arg in args: 
 
@@ -226,9 +226,10 @@ def val_evol(palette, title, bar='no',*args, **kwargs):
 
         for i in range(0,len(arg)): 
 
-            plt.scatter(range(0, len(arg))[i],arg[i], color=colors[i], **kwargs) 
+            plt.scatter(range(0, len(arg))[i],arg[i], color=colors[i], **kwargs)
 
-        plt.plot(arg, color='lightblue') 
+        lc='lightblue'
+        plt.plot(arg, color=lc) 
 
     if bar=='yes': 
 
@@ -673,9 +674,9 @@ def fit_dP(dP):
 
 def plot3d(md, par, **kwargs): 
 
-    fig=plt.figure() 
+#    fig=plt.figure() 
 
-    ax = fig.gca(projection='3d') 
+    ax = plt.gca(projection='3d') 
 
     ax.plot_trisurf(md.mesh.x, md.mesh.y, par, linewidth=0.2, antialiased=True, **kwargs) 
 
