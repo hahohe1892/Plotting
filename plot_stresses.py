@@ -27,58 +27,50 @@ p='*FrM1200*FlMreal180*BuH0*BuP0*BuS0*ByH-900*ByP55000*ByS20000*off.nc'
 p='*FrM800*FlMreal120*BuH-360*BuP55000*BuS20000*ByH0*ByP0*ByS0*'
 p='*FrM1200*FlMreal180*BuH240*BuP55000*BuS20000*ByH0*ByP0*ByS0*'
 
-
-modpath='./Models/bumps/'+p
+modpath='./Models/embayments/'+p
 mod=glue_runs_md(modpath)
 
-fs=15
-l=12
 
 fig = plt.figure()
-gs = GridSpec(nrows=17, ncols=4)
+gs = GridSpec(nrows=21, ncols=4)
 triangles=mpl.tri.Triangulation(mod.mesh.x, mod.mesh.y, mod.mesh.elements-1)
 x=(mod.mesh.x[mod.mesh.elements[:,0]-1]+mod.mesh.x[mod.mesh.elements[:,1]-1]+mod.mesh.x[mod.mesh.elements[:,2]-1])/3
 y=(mod.mesh.y[mod.mesh.elements[:,0]-1]+mod.mesh.y[mod.mesh.elements[:,1]-1]+mod.mesh.y[mod.mesh.elements[:,2]-1])/3
 countr=0
 countc=0
-vmin=-100000
-vmax=100000
-for i in range(212,228,1):
+vmin=-50000
+vmax=50000
+for i in range(205,225,1):
     ax=fig.add_subplot(gs[countr:countr+4, countc])
     if countr != 0:
         ax.set_xticklabels([])
     else:
         ax.xaxis.tick_top()
-        xticks([35000,45000,55000,65000],[35,45,55,65], fontsize=l)
-        #xlabel('x-coordinates [km]', fontsize=fs)
-    yticks([12000,15000,18000], [2,5,8], fontsize=l)
+        xticks([35000,45000,55000,65000],[35,45,55,65])
+    yticks([12000,15000,18000], [2,5,8])
     if countc != 0:
         ax.set_yticklabels([])
-    #else:
-        #ylabel('y-coordinates [km]', fontsize=fs)
     countc+=1
     if countc==4:
         countr+=4
         countc=0
     P=mod.results.TransientSolution[i].Pressure
-    ds=drivingstress(mod, mod.results.TransientSolution[i].Surface, mod.results.TransientSolution[i].Thickness)[-3] # -3 is x-direction, -1 is all
-    dsf=drivingstress(mod, mod.results.TransientSolution[i-1].Surface, mod.results.TransientSolution[i-1].Thickness)[-3]
-    bd=basal_drag(mod, mod.results.TransientSolution[i].Thickness, mod.results.TransientSolution[i].Base, mod.results.TransientSolution[i].Vx)[0]
-    bdf=basal_drag(mod, mod.results.TransientSolution[i-1].Thickness, mod.results.TransientSolution[i-1].Base, mod.results.TransientSolution[i-1].Vx)[0]
+    ds=drivingstress(mod, mod.results.TransientSolution[i].Surface, mod.results.TransientSolution[i].Thickness)[-1]
+    dsf=drivingstress(mod, mod.results.TransientSolution[i-1].Surface, mod.results.TransientSolution[i-1].Thickness)[-1]
+    bd=basal_drag(mod, mod.results.TransientSolution[i].Thickness, mod.results.TransientSolution[i].Base, mod.results.TransientSolution[i].Vel)[0]
+    bdf=basal_drag(mod, mod.results.TransientSolution[i-1].Thickness, mod.results.TransientSolution[i-1].Base, mod.results.TransientSolution[i-1].Vel)[0]
     #r=bd/(ds+1)
     #f=bdf/(dsf+1)
     ls=ds-bd
     lsf=dsf-bdf
-    tripcolor(triangles, (ls).flatten(), vmin=vmin, vmax=vmax, cmap='RdYlBu_r')
+    tripcolor(triangles, (bd).flatten(), vmin=vmin, vmax=vmax, cmap='RdYlBu_r')
     xlim(35000,70000)
     ylim(11000,19000)
     plotcontour(mod, mod.results.TransientSolution[i].MaskGroundediceLevelset, levels=[0], colors='green')
     plotcontour(mod, mod.results.TransientSolution[i].Thickness, levels=[10], colors='black')
-ax21 = fig.add_subplot(gs[16,:])
-norm = colors.Normalize(vmin=vmin/1000, vmax=vmax/1000)
-cb1 = mpl.colorbar.ColorbarBase(ax21, cmap=mpl.cm.RdYlBu_r, norm=norm, orientation='horizontal')
-xticks(fontsize=l)
-xlabel('Longitudinal Stress [kPa]', fontsize=fs)
+ax21 = fig.add_subplot(gs[20,:])
+norm = colors.Normalize(vmin=vmin, vmax=vmax)
+cb1 = mpl.colorbar.ColorbarBase(ax21, cmap=mpl.cm.RdYlBu_r, norm=norm, label='Longitudinal Stress', orientation='horizontal')
 
 
 
@@ -93,10 +85,10 @@ ds=drivingstress(mod, mod.results.TransientSolution[i].Surface, mod.results.Tran
 bd=basal_drag(mod, mod.results.TransientSolution[i].Thickness, mod.results.TransientSolution[i].Base, mod.results.TransientSolution[i].Vx)[0]
 ls=ds-bd
 ax=fig.add_subplot(gs[:,1:10])
-tripcolor(triangles, (ls).flatten(), vmin=vmin, vmax=vmax, cmap='hot_r')
+tripcolor(triangles, (ls).flatten(), vmin=vmin, vmax=vmax, cmap='RdYlBu_r')
 xlim(35000,75000)
-ylim(10000,19000)
-#plotcontour(mod, mod.results.TransientSolution[i].MaskGroundediceLevelset, levels=[0], colors='green', linewidths=2)
+ylim(11000,19000)
+plotcontour(mod, mod.results.TransientSolution[i].MaskGroundediceLevelset, levels=[0], colors='green', linewidths=2)
 plotcontour(mod, mod.results.TransientSolution[i].Thickness, levels=[10], colors='black', linewidths=2)
 yticks([12000,15000,18000], [2,5,8])
 xticks([35000,45000,55000,65000,75000],[35,45,55,65,75])
@@ -105,53 +97,3 @@ ylabel('across-flow Distance [km]')
 ax21 = fig.add_subplot(gs[:,10])
 norm = colors.Normalize(vmin=vmin/1000, vmax=vmax/1000)
 cb1 = mpl.colorbar.ColorbarBase(ax21, cmap=mpl.cm.RdYlBu_r, norm=norm, label='Longitudinal Stress [kPa]', orientation='vertical')
-
-
-fig = plt.figure()
-gs = GridSpec(nrows=2, ncols=15)
-triangles=mpl.tri.Triangulation(mod.mesh.x, mod.mesh.y, mod.mesh.elements-1)
-x=(mod.mesh.x[mod.mesh.elements[:,0]-1]+mod.mesh.x[mod.mesh.elements[:,1]-1]+mod.mesh.x[mod.mesh.elements[:,2]-1])/3
-y=(mod.mesh.y[mod.mesh.elements[:,0]-1]+mod.mesh.y[mod.mesh.elements[:,1]-1]+mod.mesh.y[mod.mesh.elements[:,2]-1])/3
-vmin=-150000
-vmax=150000
-txt=['a)', 'b)', 'c)','dummy', 'd)']
-indr=0
-indc=0
-for i in [1,5,100,200]:
-    countr=0
-    countc=0
-    if i == 100 or i==200:
-        countr+=1
-        indr+=1
-    if i == 5 or i == 200:
-        countc+=7
-        indc+=1
-    ax=fig.add_subplot(gs[countr, countc:countc+7])
-    if countr != 1:
-        ax.set_xticklabels([])
-    else:
-        xticks([35000,45000,55000,65000],[35,45,55,65], fontsize=l)
-        xlabel('x-coordinates [km]', fontsize=fs)
-    yticks([12000,15000,18000], [2,5,8], fontsize=l)
-    if countc != 0:
-        ax.set_yticklabels([])
-    else:
-        ylabel('y-coordinates [km]', fontsize=fs)
-    text(65000,18000, txt[indr+indc], fontsize=fs)
-    ds=drivingstress(mod, mod.results.TransientSolution[i].Surface, mod.results.TransientSolution[i].Thickness)[-3] # -3 is x-direction, -1 is all
-    dsf=drivingstress(mod, mod.results.TransientSolution[i-1].Surface, mod.results.TransientSolution[i-1].Thickness)[-3]
-    bd=basal_drag(mod, mod.results.TransientSolution[i].Thickness, mod.results.TransientSolution[i].Base, mod.results.TransientSolution[i].Vx)[0]
-    bdf=basal_drag(mod, mod.results.TransientSolution[i-1].Thickness, mod.results.TransientSolution[i-1].Base, mod.results.TransientSolution[i-1].Vx)[0]
-    ls=ds-bd
-    lsf=dsf-bdf
-    tripcolor(triangles, (ls).flatten(), vmin=vmin, vmax=vmax, cmap='RdYlBu_r')
-    xlim(35000,70000)
-    ylim(11000,19000)
-    plotcontour(mod, mod.results.TransientSolution[i].MaskGroundediceLevelset, levels=[0], colors='green')
-    plotcontour(mod, mod.results.TransientSolution[i].Thickness, levels=[10], colors='black')
-ax21 = fig.add_subplot(gs[:,14])
-norm = colors.Normalize(vmin=vmin/1000, vmax=vmax/1000)
-cb1 = mpl.colorbar.ColorbarBase(ax21, cmap=mpl.cm.RdYlBu_r, norm=norm, orientation='vertical')
-ylabel('Longitudinal Stress [kPa]', fontsize=fs)
-xticks(fontsize=l)
-

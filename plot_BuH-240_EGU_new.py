@@ -77,6 +77,8 @@ for q in range(0,len(mod.results.TransientSolution)-cut,intervall):
     ax0.set_yticklabels(range(0,11,2))
     ax0.text(75000, 20100, 'Year {}'.format(q), fontsize=14)
     greybox()
+    ax3 = fig.add_subplot(gs[:,-1])
+    cb1 = mpl.colorbar.ColorbarBase(ax3, cmap=mpl.cm.viridis, norm=norm, label='Time [yrs]', orientation='vertical')
     camera.snap()
     
 plt.sca(ax1)

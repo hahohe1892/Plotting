@@ -36,6 +36,9 @@ for t in range(len(md.results.TransientSolution)):
         if coi == -1 and coi2==1:
             vs.append(voi2)
 
+    if len(vs)==0:
+        break
+
     vels=[]
     min_xs=[]
     for p in vs:

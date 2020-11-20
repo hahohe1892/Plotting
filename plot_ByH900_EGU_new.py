@@ -18,7 +18,7 @@ from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 from basaldrag import *
 from drivingstress import *
 from slope import *
-pattern=['*FrM1200*FlMreal180*ByH900*.nc']
+pattern=['*FrM1200*FlMreal180*ByH900*ByS20*.nc']
 
 AOI=False
 
@@ -66,6 +66,8 @@ for q in range(0,len(mod.results.TransientSolution)-cut,intervall):
     ax0.set_yticklabels(range(0,11,2))
     ax0.text(75000, 20100, 'Year {}'.format(q), fontsize=14)
     greybox()
+    plt.sca(ax3)
+    cb1 = mpl.colorbar.ColorbarBase(ax3, cmap=mpl.cm.viridis, norm=norm, label='Years', orientation='vertical')
     camera.snap()
     
 plt.sca(ax1)

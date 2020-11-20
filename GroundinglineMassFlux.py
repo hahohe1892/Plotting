@@ -48,4 +48,5 @@ for q in m:
         GLMF.append(md2.results.StressbalanceSolution.GroundinglineMassFlux)
         print('step {} from {}'.format(i, len(md.results.TransientSolution)))
 
+
 np.save('GLMF_m0.npy', GLMF)

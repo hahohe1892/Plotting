@@ -28,12 +28,17 @@ bottlenecks=['*FrM1200*FlMreal180*BuH0*BuP0*BuS0*ByH-901*ByP55000*ByS20000*asy*'
 bumps=['*FrM1200*FlMreal180*BuH180*BuP50000*BuS30000*ByH0*ByP0*ByS0*','*FrM1200*FlMreal180*BuH120*BuP55000*BuS20000*ByH0*ByP0*ByS0*','*FrM1200*FlMreal180*BuH180*BuP55000*BuS20000*ByH0*ByP0*ByS0*','*FrM1200*FlMreal180*BuH240*BuP55000*BuS20000*ByH0*ByP0*ByS0*']
 
 colors=['red', 'Gold','lightblue','cornflowerblue', 'DarkBlue']
-colors=['LightPink','Violet','red','lightblue','cornflowerblue','DarkBlue','Red','palegreen','mediumseagreen','DarkGreen','LightPink','Violet','Red','Gold','Orange','Saddlebrown','Red','lightgray','Gray','Black']
+colors=['lightblue','cornflowerblue','cornflowerblue','lightblue','cornflowerblue','DarkBlue','mediumseagreen','palegreen','mediumseagreen','DarkGreen','Gold','Saddlebrown','Orange','Gold','Orange','Saddlebrown','Gray','lightgray','Gray','Black']
+markers=['*','*','+','o','o','o','+','o','o','o','*','*','+','o','o','o','+','o','o','o']
+labels=['Embayment', 'Depression', 'Bottleneck', 'Bump']
 intercepts=[]
 
 megapat=[embayments,depressions,bottlenecks,bumps]
 interest=[y for x in megapat for y in x]
 
+allpoint=[[],[]]
+
+fig, ax =plt.subplots(figsize=(8,7))
 for i,element in enumerate(interest):
     all_values=all_vals[element]['all_values']
     inds_dic_GL=all_vals[element]['inds_dic_GL']
@@ -43,17 +48,41 @@ for i,element in enumerate(interest):
     P=np.array(rfj_chars_GL['P'])
     inds_ind=np.array(inds_dic_GL['dP'])[np.array(inds_dic_GL['dP'])<len(all_values['GroundinglineMassFlux'])]
     par=np.array(all_values['GroundinglineMassFlux'])[inds_ind]
-    par2=np.array(all_values['GroundinglineMassFlux'])[inds_ind]
+    #if i in [6,7,8,9,16,17,18,19]:
+    #    par=par*1.3
+    inds_ind2=np.array(inds_dic_GL['dP'])[np.array(inds_dic_GL['dP'])<len(all_values['dGL'])-1]
+    par2=np.array(all_values['dGL'])[inds_ind2]
     flux=np.array(all_values['Flux'])[inds_ind]
     
     fig=plt.figure(1)
-    plt.scatter(dP, par/P, color=colors[i])
+    if markers[i]!='+':
+        facecolor='none'
+    else:
+        facecolor=colors[i]
+    ax.scatter(dP, par/P, color=colors[i], marker=markers[i], facecolors=facecolor)
+    xlabel('dS [m/100m]')
+    ylabel('$\it{\mathregular{Q_{GL}/S}}$ [km\u00b3/yr]')
+
+
+
+    
+    ax.scatter(dP,-P, par, color=colors[i])
+
+    for e,t in enumerate(par):
+        allpoint[1].append(t/P[e])
+    for b in dP:
+        allpoint[0].append(b)
+    
     fig2=plt.figure(2)
     plt.scatter(dP, par2, color=colors[i])
-    z = np.polyfit(dP, par/P,1)
 
-    p=np.poly1d(z)
+z = np.polyfit(allpoint[0], allpoint[1],1)
 
-    plt.plot(dP, p(dP), color=colors[i])
+p=np.poly1d(z)
+
+o=np.linspace(-200,200,len(allpoint[0]))
+
+plt.plot(allpoint[0], allpoint[1], '.')
+plt.plot(o, p(o))
 
     intercepts.append(z[0])

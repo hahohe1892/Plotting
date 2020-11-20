@@ -24,7 +24,7 @@ embayments=['*FrM1200*FlMreal180*BuH0*BuP0*BuS0*ByH450*ByP55000*ByS20000*','*FrM
 depressions=['*FrM1200*FlMreal180*BuH-120*BuP55000*BuS20000*ByH0*ByP0*ByS0*','*FrM1000*FlMreal150*BuH-240*BuP55000*BuS20000*ByH0*ByP0*ByS0*','*FrM1200*FlMreal180*BuH-360*BuP55000*BuS20000*ByH0*ByP0*ByS0*']
 bumps=['*FrM1200*FlMreal180*BuH120*BuP55000*BuS20000*ByH0*ByP0*ByS0*MSF200000*','*FrM1200*FlMreal180*BuH180*BuP55000*BuS20000*ByH0*ByP0*ByS0*','*FrM1200*FlMreal180*BuH240*BuP55000*BuS20000*ByH0*ByP0*ByS0*']
 
-
+p='bottlenecks/'+bottlenecks[0]
 
 megapat=[bottlenecks, embayments, depressions, bumps]
 
@@ -40,13 +40,17 @@ lon = np.array([int(i) for i in newstr.split()])
 wet_pat=lon[[2,4,5,7]]
 fj_chars, rfj_chars_GL, rfj_chars_mval, inds_dic_GL, inds_dic_mval = get_fjord(mod, all_values, AOI, pattern=wet_pat)
 
+n=10
+
 drag=[]
 for i in range(len(all_values['GLval'])):
     GL=all_values['GLval'][i]
     Fr=all_values['mval'][i]
-    bd=basal_drag(mod, mod.results.TransientSolution[i].Thickness, mod.results.TransientSolution[i].Base, mod.results.TransientSolution[i].Vx)[1]
-    area=np.where(np.logical_and(mod.mesh.x<(GL+(Fr-GL)), mod.mesh.x>GL-10000))
+    bd=basal_drag(mod, mod.results.TransientSolution[i].Thickness, mod.results.TransientSolution[i].Base, mod.results.TransientSolution[i].Vx)[0]
+    ds=drivingstress(mod, mod.results.TransientSolution[i].Surface, mod.results.TransientSolution[i].Thickness)[-1]
+    stress_coup=mod.results.TransientSolution[i].Thickness[np.where(np.logical_and(mod.mesh.x==GL, np.logical_and(mod.mesh.y<15500, mod.mesh.y>14500)))][0]*n
+    area=np.where(np.logical_and(mod.mesh.x<(GL), mod.mesh.x>GL-stress_coup))
     thk=np.where(mod.results.TransientSolution[i].Thickness>5)[0]
     aoi=np.intersect1d(area, thk)
-    drag.append(np.sum(abs(bd[area])))
-    
+    drag.append(np.mean(abs(bd[area]-ds[area])))
+    print(stress_coup)
