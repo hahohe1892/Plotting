@@ -46,12 +46,12 @@ for i,element in enumerate(interest):
 
     dP=np.array(rfj_chars_GL['dP'])
     P=np.array(rfj_chars_GL['P'])
-    inds_ind=np.array(inds_dic_GL['dP'])[np.array(inds_dic_GL['dP'])<len(all_values['GroundinglineMassFlux'])]
-    par=np.array(all_values['GroundinglineMassFlux'])[inds_ind]
+    inds_ind=np.array(inds_dic_GL['P'])[np.array(inds_dic_GL['P'])<len(all_values['GLvel'])]
+    par=np.array(all_values['GLvel'])[inds_ind]
     #if i in [6,7,8,9,16,17,18,19]:
     #    par=par*1.3
-    inds_ind2=np.array(inds_dic_GL['dP'])[np.array(inds_dic_GL['dP'])<len(all_values['dGL'])-1]
-    par2=np.array(all_values['dGL'])[inds_ind2]
+    #inds_ind2=np.array(inds_dic_GL['dP'])[np.array(inds_dic_GL['dP'])<len(all_values['dGL'])-1]
+    #par2=np.array(all_values['dGL'])[inds_ind2]
     flux=np.array(all_values['Flux'])[inds_ind]
     
     fig=plt.figure(1)
@@ -59,9 +59,12 @@ for i,element in enumerate(interest):
         facecolor='none'
     else:
         facecolor=colors[i]
-    ax.scatter(dP, par/P, color=colors[i], marker=markers[i], facecolors=facecolor)
-    xlabel('dS [m/100m]')
-    ylabel('$\it{\mathregular{Q_{GL}/S}}$ [km\u00b3/yr]')
+    try:
+        ax.scatter(dP, par, color=colors[i], marker=markers[i], facecolors=facecolor)
+    except:
+        ax.scatter(dP[:-1], par, color=colors[i], marker=markers[i], facecolors=facecolor)
+    xlabel('dS [m\u00b2/100m]')
+    ylabel('$\it{\mathregular{v_{GL}}}$ [m/yr]')
 
 
 
@@ -86,3 +89,35 @@ plt.plot(allpoint[0], allpoint[1], '.')
 plt.plot(o, p(o))
 
     intercepts.append(z[0])
+
+
+
+fig, ax =plt.subplots(figsize=(8,7))
+for i,element in enumerate(interest):
+    if i in [6,7,8,9]:
+        continue
+    all_values=all_vals[element]['all_values']
+    inds_dic_GL=all_vals[element]['inds_dic_GL']
+    rfj_chars_GL=all_vals[element]['rfj_chars_GL']
+
+    dP=np.array(rfj_chars_GL['dP'])
+    P=np.array(rfj_chars_GL['P'])
+    inds_ind=np.array(inds_dic_GL['P'])[np.array(inds_dic_GL['P'])<len(all_values['dGL'])]
+    par=np.array(all_values['dGL'])[inds_ind]
+    #if i in [6,7,8,9,16,17,18,19]:
+    #    par=par*1.3
+    #inds_ind2=np.array(inds_dic_GL['dP'])[np.array(inds_dic_GL['dP'])<len(all_values['dGL'])-1]
+    #par2=np.array(all_values['dGL'])[inds_ind2]
+    flux=np.array(all_values['Flux'])[inds_ind]
+    
+    fig=plt.figure(1)
+    if markers[i]!='+':
+        facecolor='none'
+    else:
+        facecolor=colors[i]
+    try:
+        ax.scatter(P/1e6, par, color=colors[i], marker=markers[i], facecolors=facecolor)
+    except:
+        ax.scatter(P[:-1]/1e6, par, color=colors[i], marker=markers[i], facecolors=facecolor)
+    xlabel('dS [m\00b2/100m]')
+    ylabel('$\it{\mathregular{_{GL}]}$ [km\u00b2]')

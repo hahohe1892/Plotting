@@ -96,14 +96,18 @@ def msop(md, *args): #max standard output pars
 
   
 
-def GLvalf(md): 
+def GLvalf(md, depression='no'): 
 
     GLval=[] 
     central_lowGL=np.where(np.logical_and(md.mesh.y<15500, md.mesh.y>14500))
-    for q in range(0, len(md.results.TransientSolution)): 
-        GL_criteria=np.where(md.results.TransientSolution[q].MaskGroundediceLevelset>0)
+    for q in range(0, len(md.results.TransientSolution)):
         try:
-            GLval.append(np.max(md.mesh.x[np.intersect1d(central_lowGL, GL_criteria)]))
+            if depression=='no':
+                GL_criteria=np.where(md.results.TransientSolution[q].MaskGroundediceLevelset>0)
+                GLval.append(np.max(md.mesh.x[np.intersect1d(central_lowGL, GL_criteria)]))
+            else:
+                GL_criteria=np.where(md.results.TransientSolution[q].MaskGroundediceLevelset>0)
+                GLval.append(np.max(md.mesh.x[np.intersect1d(central_lowGL, GL_criteria)]))
         except ValueError:
             GLval.append(10000)
     return GLval 
@@ -122,8 +126,32 @@ def mvalf(md):
             mval.append(10000)
     return mval 
 
-  
+def findGL(md,t):
+    ground_mask=np.squeeze(md.results.TransientSolution[t].MaskGroundediceLevelset>0)
+    float_mask=np.squeeze(md.results.TransientSolution[t].MaskGroundediceLevelset<0)
+    thk_mask=np.squeeze(md.results.TransientSolution[t].Thickness>2)
+    bed_mask=np.squeeze(md.geometry.bed<0)
+    no_ice_mask=np.squeeze(md.results.TransientSolution[t].MaskIceLevelset>0)
+    ice_mask=np.squeeze(md.results.TransientSolution[t].MaskIceLevelset<0)
+    floating=np.logical_or(np.logical_and(float_mask, thk_mask), np.logical_and(no_ice_mask, bed_mask))
+    grounded=np.logical_and(np.logical_and(np.logical_and(bed_mask, thk_mask),ground_mask), ice_mask)
+    categorized=np.zeros(md.mesh.numberofvertices)
+    categorized[floating]=-1
+    categorized[grounded]=1
+    
+    vs=[]
+    for i, q in enumerate(md.mesh.edges-1):
+        voi=q[0]
+        coi=categorized[voi]
+        voi2=q[1]
+        coi2=categorized[voi2]
+        if coi == 1.0 and coi2==-1.0:
+            vs.append(voi)
+        if coi == -1 and coi2==1:
+            vs.append(voi2)
 
+    return vs
+    
 def GLvel(md, GLval): 
 
     central_lowGL=np.where(np.logical_and(md.mesh.y<15500, md.mesh.y>14500)) 
@@ -144,7 +172,15 @@ def GLvel(md, GLval):
 
     return GLvel, GLvelx 
 
-          
+
+def GLvel_mean(md):
+    mean_vels=[]
+    med_vels=[]
+    for i in range(len(md.results.TransientSolution)):
+        mean_vels.append(np.mean(md.results.TransientSolution[i].Vel[findGL(md, i)]))
+        med_vels.append(np.median(md.results.TransientSolution[i].Vel[findGL(md, i)]))
+
+    return mean_vels, med_vels
 
 def deltaval(val): 
 
@@ -832,7 +868,7 @@ def along_GLgate(md, par,buff):
 
   
 
-def getallpars(md, cut='all'): 
+def getallpars(md, cut='all', depression='no'): 
 
     mod=deepcopy(md) 
 
@@ -860,7 +896,7 @@ def getallpars(md, cut='all'):
 
   
 
-    all_values['GLval']=GLvalf(mod) 
+    all_values['GLval']=GLvalf(mod, depression=depression) 
 
     all_values['mval']=mvalf(mod) 
 
@@ -1024,14 +1060,14 @@ def ffj_chars(md, AOI, **kwargs):
 
   
 
-def glue_runs(pattern, manual_mods='no'):
+def glue_runs(pattern, manual_mods='no', depression='no'):
     
     if manual_mods == 'no':
         mods=glob.glob(pattern) 
 
         mods.sort(key=os.path.getmtime) 
     else:
-        mods=manual_mods
+        mods=manual_mods        
 
     all_mods={} 
 
@@ -1043,7 +1079,7 @@ def glue_runs(pattern, manual_mods='no'):
 
         all_mods[i]=loadmodel(i) 
 
-        all_pars_mods[i+'_all_values']=getallpars(all_mods[i])[0] 
+        all_pars_mods[i+'_all_values']=getallpars(all_mods[i], depression=depression)[0] 
 
     for t in all_pars_mods[mods[0]+'_all_values']: 
 
