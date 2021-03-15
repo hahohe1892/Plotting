@@ -90,7 +90,7 @@ newcmp = ListedColormap(newcolors, name='OrangeBlue')
 
 interest=[ '*FrM1200*FlMreal180*BuH0*BuP0*BuS0*ByH1350*ByP55000*ByS20000*off.nc', '*FrM1200*FlMreal180*BuH0*BuP0*BuS0*ByH-900*ByP55000*ByS20000*.nc', '*FrM800*FlMreal120*BuH-360*BuP55000*BuS20000*ByH0*ByP0*ByS0*off.nc', '*FrM1200*FlMreal180*BuH240*BuP55000*BuS20000*ByH0*ByP0*ByS0*off.nc']
 
-time_instance=[120,2,100,120]
+time_instance=[120,2,100,120] 
 
 geompath=['embayments/', 'bottlenecks/','depressions/', 'bumps/']
 
@@ -101,11 +101,11 @@ vmax=200000
 for i,q in enumerate(interest):
     ax=[]
     fig = plt.figure(1)
-    gs = GridSpec(nrows=25, ncols=7)
-    ax.append(fig.add_subplot(gs[3:12,0:3]))
-    ax.append(fig.add_subplot(gs[3:12,4:7]))
-    ax.append(fig.add_subplot(gs[13:22,0:3]))
-    ax.append(fig.add_subplot(gs[13:22,4:7]))
+    gs = GridSpec(nrows=25, ncols=21)
+    ax.append(fig.add_subplot(gs[3:12,0:10]))
+    ax.append(fig.add_subplot(gs[3:12,11:21]))
+    ax.append(fig.add_subplot(gs[13:22,0:10]))
+    ax.append(fig.add_subplot(gs[13:22,11:21]))
     md=glue_runs_md('./Models/'+geompath[i]+q)
     triangles=mpl.tri.Triangulation(md.mesh.x, md.mesh.y, md.mesh.elements-1)
     sigma_along, sigma_across, sigma_shear = stresses(md, md.results.TransientSolution[time_instance[i]].Vx, md.results.TransientSolution[time_instance[i]].Vy)
@@ -169,17 +169,17 @@ for r in range(len(md.results.TransientSolution)):
 
 ax=[]
 fig = plt.figure(2)
-gs = GridSpec(nrows=27, ncols=7)
-ax.append(fig.add_subplot(gs[3:12,0:3]))
-ax.append(fig.add_subplot(gs[3:12,4:7]))
-ax.append(fig.add_subplot(gs[13:22,0:3]))
-ax.append(fig.add_subplot(gs[13:22,4:7]))
+gs = GridSpec(nrows=27, ncols=21)
+ax.append(fig.add_subplot(gs[0:10,0:10]))
+ax.append(fig.add_subplot(gs[0:10,11:21]))
+ax.append(fig.add_subplot(gs[12:22,0:10]))
+ax.append(fig.add_subplot(gs[12:22,11:21]))
 
 for i,q in enumerate(interest):
     md=glue_runs_md('./Models/'+geompath[i]+q)
     Vx=md.results.TransientSolution[time_instance[i]].Vx
     Vy=md.results.TransientSolution[time_instance[i]].Vy
-    stress=mechanicalproperties(md, md.results.TransientSolution[time_instance[i]].Vx, md.results.TransientSolution[time_instance[i]].Vy)
+    stress=mechanicalproperties(md, Vx, Vy)
     sigma_xy=md.results.deviatoricstress.xy
     sigma_xy_a=averaging(md, sigma_xy, 0)
     H=np.squeeze(md.results.TransientSolution[time_instance[i]].Thickness)
@@ -213,9 +213,9 @@ for i,q in enumerate(interest):
         vmin=-250
         vmax=250
         cmap=newcmp    
-        ax22 = fig.add_subplot(gs[25:,1:6])
+        ax22 = fig.add_subplot(gs[25:,5:16])
         norm = colors.Normalize(vmin=vmin, vmax=vmax)
-        cb1 = mpl.colorbar.ColorbarBase(ax22, cmap=newcmp, norm=norm, label='Longitudinal Stress Gradient/Lateral Shear Stress [kPa]', orientation='horizontal')
+        cb1 = mpl.colorbar.ColorbarBase(ax22, cmap=newcmp, norm=norm, label='Lateral Shear/Longitudinal Stress Gradient [kPa]', orientation='horizontal')
 
     plt.sca(ax[i])
     tripcolor(md.mesh.x, md.mesh.y, mask, vmin=vmin, vmax=vmax, cmap=cmap)
@@ -228,7 +228,7 @@ for i,q in enumerate(interest):
     xlim(37000,72000)
     ylim(11000,19000)
     yticks([12000,15000,18000], [2,5,8])
-    xticks([40000,50000,60000,70000],[40,50,60,70])
+    xticks([45000,55000,65000],[45,55,65])
     if i > 1:
         xlabel('x [km]')
     if i < 2:

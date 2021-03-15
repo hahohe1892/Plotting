@@ -112,3 +112,51 @@ data_new={}
 interest=[y for x in megapat for y in x]
 for l,element in enumerate(data):
     data_new[interest[l]]=data[element]
+
+
+### GLs of  asymmetric and longer geometries alone ###
+
+interest=[ '*FrM1200*FlMreal180*BuH0*BuP0*BuS0*ByH1800*ByP55000*ByS20000*asy*nc', '*FrM1200*FlMreal180*BuH0*BuP0*BuS0*ByH900*ByP50000*ByS30000*nc', '*FrM1200*FlMreal180*BuH0*BuP0*BuS0*ByH-901*ByP55000*ByS20000*asy*nc', '*FrM1200*FlMreal180*BuH0*BuP0*BuS0*ByH-675*ByP50000*ByS30000*nc']
+
+paths=['embayments/', 'embayments/', 'bottlenecks/', 'bottlenecks/']
+
+one_file_cont_asy={}
+
+for i,element in enumerate(interest):
+    geompath='./Models/'+paths[i]
+    
+    modpath=geompath+element
+    mod=glue_runs_md(modpath)
+    cont=[]
+
+    if hasattr(mod.results.TransientSolution[-1], 'catch_mesh'):
+        lens=[]
+        for q in range(len(mod.results.TransientSolution[-1].catch_mesh)):
+            lens.append(len(mod.results.TransientSolution[-1].catch_mesh[q][0]))
+    for q in range(len(mod.results.TransientSolution)):
+        par=mod.results.TransientSolution[q].MaskGroundediceLevelset
+        try:
+            cont_x=tricontour(mod.mesh.x, mod.mesh.y, np.squeeze(par), levels=[0]).allsegs[0][0][:,0]
+            cont_y= tricontour(mod.mesh.x, mod.mesh.y, np.squeeze(par), levels=[0]).allsegs[0][0][:,1]
+        except:
+            right_index=int(np.nonzero(lens==np.intersect1d(lens,len(par)))[0])
+            cont_x=tricontour(mod.results.TransientSolution[-1].catch_mesh[right_index][0], mod.results.TransientSolution[-1].catch_mesh[right_index][1], np.squeeze(par), levels=[0]).allsegs[0][0][:,0]
+            cont_y=tricontour(mod.results.TransientSolution[-1].catch_mesh[right_index][0], mod.results.TransientSolution[-1].catch_mesh[right_index][1], np.squeeze(par), levels=[0]).allsegs[0][0][:,1]
+
+        cont.append([cont_x, cont_y])
+
+    b_x1=tricontour(mod.mesh.x, mod.mesh.y, np.squeeze(mod.geometry.bed), levels=[0]).allsegs[0][0][:,0]
+    b_y1=tricontour(mod.mesh.x, mod.mesh.y, np.squeeze(mod.geometry.bed), levels=[0]).allsegs[0][0][:,1]
+    b_x2=tricontour(mod.mesh.x, mod.mesh.y, np.squeeze(mod.geometry.bed), levels=[0]).allsegs[0][1][:,0]
+    b_y2=tricontour(mod.mesh.x, mod.mesh.y, np.squeeze(mod.geometry.bed), levels=[0]).allsegs[0][1][:,1]     
+    cont.append([b_x1, b_y1])
+    cont.append([b_x2, b_y2])## so last element of cont is bed
+
+    plt.gcf()
+    close()
+
+    one_file_cont_asy[element]=cont
+    
+c=open('OneFileCont_asyandlonger.pkl', 'wb')
+pickle.dump(one_file_cont_asy, c)
+c.close()

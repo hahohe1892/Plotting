@@ -34,7 +34,7 @@ markdot=[]
 
 fs=15
 ls=12
-rc('text', usetex=True)
+#rc('text', usetex=True)
 for pattern in megapat:
     
     n=int(np.nonzero([x==pattern for x in megapat])[0])

@@ -23,13 +23,13 @@ geompath=['embayments/', 'embayments/','bottlenecks/','bottlenecks/','depression
 
 ax=[]
 fig = plt.figure()
-gs = GridSpec(nrows=34, ncols=7)
-ax.append(fig.add_subplot(gs[0:9,0:3]))
-ax.append(fig.add_subplot(gs[0:9,4:7]))
-ax.append(fig.add_subplot(gs[10:19,0:3]))
-ax.append(fig.add_subplot(gs[10:19,4:7]))
-ax.append(fig.add_subplot(gs[20:29,0:3]))
-ax.append(fig.add_subplot(gs[20:29,4:7]))
+gs = GridSpec(nrows=33, ncols=21)
+ax.append(fig.add_subplot(gs[0:8,0:10]))
+ax.append(fig.add_subplot(gs[0:8,11:21]))
+ax.append(fig.add_subplot(gs[10:18,0:10]))
+ax.append(fig.add_subplot(gs[10:18,11:21]))
+ax.append(fig.add_subplot(gs[20:28,0:10]))
+ax.append(fig.add_subplot(gs[20:28,11:21]))
 
 for i,q in enumerate(interest):
     md=glue_runs_md('./Models/'+geompath[i]+q)
@@ -67,9 +67,9 @@ for i,q in enumerate(interest):
         vmin=-250
         vmax=250
         cmap=newcmp    
-        ax22 = fig.add_subplot(gs[32:,1:6])
+        ax22 = fig.add_subplot(gs[31:,5:16])
         norm = colors.Normalize(vmin=vmin, vmax=vmax)
-        cb1 = mpl.colorbar.ColorbarBase(ax22, cmap=newcmp, norm=norm, label='Longitudinal Stress Gradient/Lateral Shear Stress [kPa]', orientation='horizontal')
+        cb1 = mpl.colorbar.ColorbarBase(ax22, cmap=newcmp, norm=norm, label='Lateral Shear Stress/Longitudinal Stress Gradient [kPa]', orientation='horizontal')
 
     plt.sca(ax[i])
     tripcolor(md.mesh.x, md.mesh.y, mask, vmin=vmin, vmax=vmax, cmap=cmap)
@@ -77,7 +77,7 @@ for i,q in enumerate(interest):
     xlim(32000,72000)
     ylim(10500,19000)
     yticks([12000,15000,18000], [2,5,8])
-    xticks([40000,50000,60000,70000],[40,50,60,70])
+    xticks([35000,45000,55000,65000],[35,45,55,65])
     if i in [4,5]:
         xlabel('x [km]')
     if i < 4:
@@ -91,6 +91,12 @@ for i,q in enumerate(interest):
     plotcontour(md, md.results.TransientSolution[time_instance[i]].Thickness, levels=[10], colors='black')
     
     
+
+
+
+
+
+
     triangles=mpl.tri.Triangulation(mod.mesh.x, mod.mesh.y, mod.mesh.elements-1)
     x=(mod.mesh.x[mod.mesh.elements[:,0]-1]+mod.mesh.x[mod.mesh.elements[:,1]-1]+mod.mesh.x[mod.mesh.elements[:,2]-1])/3
     y=(mod.mesh.y[mod.mesh.elements[:,0]-1]+mod.mesh.y[mod.mesh.elements[:,1]-1]+mod.mesh.y[mod.mesh.elements[:,2]-1])/3

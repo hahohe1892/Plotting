@@ -63,6 +63,9 @@ for i,element in enumerate(interest):
         m='./Models/bumps/'+element+'.nc'
     if i ==2 or i==3:
         mod=glue_runs_md(m)
+        colors_w=getcolors(len(mod.results.TransientSolution)-cuts[i], 'viridis')
+        norm = mpl.colors.Normalize(vmin=0, vmax=len(mod.results.TransientSolution)-cuts[i])
+
         plt.sca(ax[i])
         along_evol(mod, 'viridis','','no',-1,'Surface','Base', linewidth=0.8)
         hlines(0,0,85000, color='lightgrey')
